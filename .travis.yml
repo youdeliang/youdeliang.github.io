@@ -16,8 +16,8 @@ script:
 after_success:
   - cd ./dist
   - git init
-  - git config user.name "${GH_USER_NAME}"
-  - git config user.email "${GH_USER_EMAIL}"
+  - git config user.name "${youdeliang}"
+  - git config user.email "${1048726003@qq.com}"
   - git add .
   - git commit -m "Build $(date +%Y%m%d%H%M)"
   - git push --force --quiet "https://${GH_TOKEN}@${GH_REPO}" master:master
