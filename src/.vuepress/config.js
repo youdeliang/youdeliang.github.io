@@ -83,7 +83,7 @@ module.exports = {
       repo: 'vuepress-theme-melodydl',
       clientId: 'd821e5499c1d72a78039',
       clientSecret: '7aee0783e9d4110041e604e7121b985655a49cf1',
-      autoCreateIssue: true,
+      autoCreateIssue: false,
     },
   }
 }
