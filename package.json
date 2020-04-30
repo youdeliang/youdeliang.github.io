@@ -1,0 +1,23 @@
+{
+  "name": "youdeliang.github.io",
+  "version": "1.0.0",
+  "description": "vuepress by blog",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vuepress dev src",
+    "build": "vuepress build src --dest dist"
+  },
+  "repository": "git+https://github.com/youdeliang/youdeliang.github.io.git",
+  "keywords": [],
+  "author": "youdeliang",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/youdeliang/youdeliang.github.io/issues"
+  },
+  "homepage": "https://github.com/youdeliang/youdeliang.github.io#readme",
+  "dependencies": {
+    "vuepress": "^1.4.1",
+    "vuepress-theme-melodydl": "^1.0.2"
+  },
+  "private": false
+}
