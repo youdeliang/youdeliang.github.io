@@ -1,24 +1,20 @@
+
 language: node_js
-node_js: stable
-git:
-  depth: false
+node_js:
+  - lts/*
+install:
+  - yarn install # npm ci
+script:
+  - yarn docs:build # npm run docs:build
+deploy:
+  provider: pages
+  skip-cleanup: true
+  local_dir: src/.vuepress/dist # 项目打包后生成的文件的目录
+  github-token: $GITHUB_TOKEN # 这里这个变量就是刚才配置 token 时填写的那个变量
+  target-branch: master
+  keep-history: true
+  on:
+    branch: gh-pages-source
 branches:
   only:
-    - src
-
-# S: Build Lifecycle
-install:
-  - yarn
-
-script:
-  - yarn build
-
-after_success:
-  - cd ./dist
-  - git init
-  - git config user.name "${GH_USER_NAME}"
-  - git config user.email "${GH_USER_EMAIL}"
-  - git add .
-  - git commit -m "Build $(date +%Y%m%d%H%M)"
-  - git push --force --quiet "https://${GH_TOKEN}@${GH_REPO}" master:master
-# E: Build LifeCycle
+    - gh-pages-source
