@@ -81,8 +81,8 @@ module.exports = {
     comments: {
       owner: 'youdeliang',
       repo: 'vuepress-theme-melodydl',
-      clientId: 'd821e5499c1d72a78039',
-      clientSecret: '7aee0783e9d4110041e604e7121b985655a49cf1',
+      clientId: 'dfba8ecad544784fec1f',
+      clientSecret: '1358ac11bc8face24f598601991083e27372988d',
       autoCreateIssue: false,
     },
   }
