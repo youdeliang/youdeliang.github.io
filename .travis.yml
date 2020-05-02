@@ -10,7 +10,7 @@ deploy:
   skip-cleanup: true
   local_dir: src/.vuepress/dist # 部署的文件夹文件
   github-token: $GITHUB_TOKEN # travis服务上的token变量
-  target-branch: gh-pages # 集成发布到gh-pages上
+  target-branch: master # 集成发布到gh-pages上
   keep-history: true
   on:
-    branch: master
+    branch: src
