@@ -1,20 +1,16 @@
-
-language: node_js
+language: node_js # node环境
 node_js:
   - lts/*
 install:
-  - yarn install # npm ci
+- yarn install
 script:
-  - yarn build # npm run docs:build
+  - yarn build # 执行命令
 deploy:
   provider: pages
   skip-cleanup: true
-  local_dir: src/.vuepress/dist # 项目打包后生成的文件的目录
-  github-token: $GITHUB_TOKEN # 这里这个变量就是刚才配置 token 时填写的那个变量
-  target-branch: master
+  local_dir: docs/.vuepress/dist # 部署的文件夹文件
+  github-token: $GITHUB_TOKEN # travis服务上的token变量
+  target-branch: gh-pages # 集成发布到gh-pages上
   keep-history: true
   on:
-    branch: gh-pages-source
-branches:
-  only:
-    - gh-pages-source
+    branch: master
