@@ -9,7 +9,7 @@ module.exports = {
   ],
   serviceWorker: true,
   base: '/',
-  theme: 'vuepress-theme-melodydl',
+  theme: 'melodydl',
   themeConfig: {
     title: 'Top Blog',
 
