@@ -7591,9 +7591,9 @@ vuepress-plugin-table-of-contents@^1.1.5:
   integrity sha512-OiUqmMq/+oB3Q9IJ3y+mzurSBmQZ6VvW5j9EiIDeo2FBo4/OJ2zhPeCw0gpUcln07qJOKBPLVYzfSt3J30g9dg==
 
 vuepress-theme-melodydl@^1.0.6:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/vuepress-theme-melodydl/-/vuepress-theme-melodydl-1.0.6.tgz#aa22401aae1db74cf2aa9a542c44ffebb33eacf1"
-  integrity sha512-5wqgLAavSkwxRckWPoipnxOwToZ3wmb02YjFOhiaoEk61mTJSkcb98tZ8nvQltsksem6o56mhQELix9rp7zKqw==
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/vuepress-theme-melodydl/-/vuepress-theme-melodydl-1.0.7.tgz#72cc1923ffa8a328c26263a8ffcb89f05ad08309"
+  integrity sha512-vOaDnmx9gq8KKt42JDQtKsTTIBOHXGadO/Lvgha9ch+f4597OYiVkba55t/nPpkMMioMtyonO+w+U2oTAxOeCw==
   dependencies:
     "@vssue/api-github-v3" "^1.4.3"
     "@vssue/vuepress-plugin-vssue" "^1.4.3"
