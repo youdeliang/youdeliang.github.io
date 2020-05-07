@@ -17,7 +17,7 @@
   "homepage": "https://github.com/youdeliang/youdeliang.github.io#readme",
   "dependencies": {
     "vuepress": "^1.4.1",
-    "vuepress-theme-melodydl": "^1.0.4"
+    "vuepress-theme-melodydl": "^1.0.6"
   },
   "private": false
 }

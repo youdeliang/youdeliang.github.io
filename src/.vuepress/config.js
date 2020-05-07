@@ -44,27 +44,32 @@ module.exports = {
     },
     // footer sns
     sns: {
-      "jianshu": { 
-        account: "jianshu", 
-        link: "https://www.jianshu.com/u/5dddaee8f351", 
+      csdn: { 
+        account: 'csdn', 
+        link: 'https://blog.csdn.net/weixin_44002432', 
       },
-      "weibo": { 
-        account: "juejin",
-        link: "https://juejin.im/user/5ce784a0f265da1b8333673c"
+      weibo: { 
+        account: 'weibo', 
+        link: 'https://weibo.com/u/5656925978', 
       },
-      "zhihu": { 
-        account: "zhihu",
-        link: "https://www.zhihu.com/people/sheng-tang-de-xing-kong"
+      juejin: { 
+        account: 'juejin',
+        link: 'https://juejin.im/user/5ce784a0f265da1b8333673c'
       },
-      "github": { 
-        account: "github",
-        link: "https://github.com/youdeliang"
+      zhihu: { 
+        account: 'zhihu',
+        link: 'https://www.zhihu.com/people/sheng-tang-de-xing-kong'
+      },
+      github: { 
+        account: 'github',
+        link: 'https://github.com/youdeliang'
       }
     },
+
     // footer github button
     footer: {
       gitbtn: {
-        repository: "https://ghbtns.com/github-btn.html?user=youdeliang&repo=vuepress-theme-top&type=star&count=true",
+        repository: "https://ghbtns.com/github-btn.html?user=youdeliang&repo=vuepress-theme-melodydl&type=star&count=true",
         frameborder: 0,
         scrolling: 0,
         width: "80px",
