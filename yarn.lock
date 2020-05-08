@@ -1058,6 +1058,11 @@
   dependencies:
     lodash.debounce "^4.0.8"
 
+"@vuepress/plugin-google-analytics@^1.4.1":
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/@vuepress/plugin-google-analytics/-/plugin-google-analytics-1.4.1.tgz#d537e7ed026e7808d1d9d186880e595b04fe0868"
+  integrity sha512-s43V5QHdTz0ayfy5vZrfMPpZzJBsj9L79TaxyMux1jOviS7oeWqkvNSblaHwP4Y8BxISehsKte8qsblQEN3zvQ==
+
 "@vuepress/plugin-last-updated@1.4.1":
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/@vuepress/plugin-last-updated/-/plugin-last-updated-1.4.1.tgz#89a9a4cbc242f9e0c5d380f73edb85ac4a7186c6"
@@ -7591,13 +7596,14 @@ vuepress-plugin-table-of-contents@^1.1.5:
   integrity sha512-OiUqmMq/+oB3Q9IJ3y+mzurSBmQZ6VvW5j9EiIDeo2FBo4/OJ2zhPeCw0gpUcln07qJOKBPLVYzfSt3J30g9dg==
 
 vuepress-theme-melodydl@^1.0.9:
-  version "1.0.9"
-  resolved "https://registry.yarnpkg.com/vuepress-theme-melodydl/-/vuepress-theme-melodydl-1.0.9.tgz#1ab192f830981401e3743b2640e0a08654bb0620"
-  integrity sha512-F7O73mhZfVedlEQF4ES0gxKwYtth+zsD/Bkmszl6NtexIKoUlq1IafLvYuaUbchaQR5qBqf7wGeL2hHZX3NJuA==
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/vuepress-theme-melodydl/-/vuepress-theme-melodydl-1.1.0.tgz#8d6c4ce50ee9e5a26ad9fccc99ff1918f41040b3"
+  integrity sha512-XwXHhaKCbsaVguqlB8JdcaY4r0QZToeZrDrqxWKBn9wGi0n/b4FBdSLD0CdRUO9vm1cS6W4OSZGR5wWqmL2c1g==
   dependencies:
     "@vssue/api-github-v3" "^1.4.3"
     "@vssue/vuepress-plugin-vssue" "^1.4.3"
     "@vuepress/plugin-back-to-top" "^1.4.1"
+    "@vuepress/plugin-google-analytics" "^1.4.1"
     "@vuepress/plugin-nprogress" "^1.4.1"
     date-fns "^1.30.1"
     lodash.debounce "^4.0.8"
