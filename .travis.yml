@@ -1,10 +1,17 @@
 language: node_js # node环境
-node_js:
-  - lts/*
+node_js: stable
+git:
+  depth: false
+branches:
+  only:
+    - src
+
 install:
-  - yarn install
+  - yarn
+
 script:
   - yarn build # 执行命令
+
 deploy:
   provider: pages
   skip-cleanup: true
