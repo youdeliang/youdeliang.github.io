@@ -6,7 +6,7 @@ script:
   - yarn build # 执行命令
 
 after_success:
-  - cd ./dist
+  - cd src/.vuepress/dist
   - git init
   - git config user.name "${GH_USER_NAME}"
   - git config user.email "${GH_USER_EMAIL}"
