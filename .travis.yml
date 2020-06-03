@@ -11,4 +11,4 @@ deploy:
   target-branch: master # 集成发布到master上
   keep-history: true
   on:
-    branch: src
+    branch: master
