@@ -4,11 +4,13 @@ install:
   - yarn
 script:
   - yarn build # 执行命令
-deploy:
-  provider: pages
-  skip-cleanup: true
-  github-token: $GITHUB_TOKEN # travis服务上的token变量
-  target-branch: master # 集成发布到master上
-  keep-history: true
-  on:
-    branch: master
+
+after_success:
+  - cd ./dist
+  - git init
+  - git config user.name "${GH_USER_NAME}"
+  - git config user.email "${GH_USER_EMAIL}"
+  - git add .
+  - git commit -m "Build $(date +%Y%m%d%H%M)"
+  - git push --force --quiet "https://${GH_TOKEN}@${GH_REPO}" master:master
+# E: Build LifeCycle
