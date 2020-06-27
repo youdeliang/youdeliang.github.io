@@ -1,6 +1,6 @@
 ---
 title: 深入JS之Promise
-date: 2020-06-22
+date: 2020-06-27
 tags:
   - JavaScript
   - Promise
