@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Vuepress 搭建指南 | Top 的博客 ｜ Top Blog</title>
+    <meta name="generator" content="VuePress 1.4.1">
+    <link rel="icon" href="/favicon.ico">
+    <meta name="description" content="个人博客">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+    <link rel="preload" href="/assets/css/0.styles.62d8fb78.css" as="style"><link rel="preload" href="/assets/js/app.c74921c7.js" as="script"><link rel="preload" href="/assets/js/6.8a44c677.js" as="script"><link rel="preload" href="/assets/js/15.58f52d14.js" as="script"><link rel="prefetch" href="/assets/js/10.5e2da4d1.js"><link rel="prefetch" href="/assets/js/11.220c158d.js"><link rel="prefetch" href="/assets/js/12.b1e6b80c.js"><link rel="prefetch" href="/assets/js/13.6773e801.js"><link rel="prefetch" href="/assets/js/14.ac840d4b.js"><link rel="prefetch" href="/assets/js/16.976d494d.js"><link rel="prefetch" href="/assets/js/17.d47fb699.js"><link rel="prefetch" href="/assets/js/18.74c455b7.js"><link rel="prefetch" href="/assets/js/2.26db6680.js"><link rel="prefetch" href="/assets/js/3.e6f78273.js"><link rel="prefetch" href="/assets/js/4.9339957e.js"><link rel="prefetch" href="/assets/js/5.9dcceca0.js"><link rel="prefetch" href="/assets/js/7.e68f402f.js"><link rel="prefetch" href="/assets/js/8.bf682037.js"><link rel="prefetch" href="/assets/js/9.9ac068c9.js">
+    <link rel="stylesheet" href="/assets/css/0.styles.62d8fb78.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div id="global-layout" data-v-7f2e4136><header class="header-container" style="background-size:cover;background-repeat:no-repeat;background-position:center;background-attachment:scroll;background-image:url(/post-bg.jpeg);" data-v-93921ff8 data-v-7f2e4136><nav class="navbar" style="position:absolute;opacity:1;transition:all 0.5s ease-in-out;" data-v-93921ff8><a href="/" class="navbar-link router-link-active">
+    Top Blog
+  </a> <ul class="navbar-links"><li><a href="/" class="router-link-active">
+        HOME
+      </a></li><li><a href="/about/">
+        ABOUT
+      </a></li><li><a href="/tags/">
+        TAGS
+      </a></li></ul> <div id="nav-icon"><span></span><span></span><span></span></div></nav> <div class="header-title" data-v-93921ff8 data-v-93921ff8><h1 data-v-93921ff8>Vuepress 搭建指南</h1> <p data-v-93921ff8></p></div></header> <div class="container" data-v-b3fda33c data-v-7f2e4136><main class="main" style="width:60%;" data-v-b3fda33c><div class="post" data-v-b3fda33c data-v-b3fda33c><article class="main-div"><div class="post-content content content__default"><p>本篇博客主要是 Vuepress 博客搭建部署指南</p> <h2 id="前言"><a href="#前言" class="header-anchor">#</a> 前言</h2> <p>想要分分钟搭建自己博客，可以直接跳到最后，教你如何分分钟搭建博客。</p> <h2 id="速览"><a href="#速览" class="header-anchor">#</a> 速览</h2> <ul><li>[x] 这是一款 Vuepress 主题，集成了博客所需的分类、TAG 墙、分页、评论等功能。</li> <li>[x] 主题追求极简，配置上手简单，适配移动端。</li> <li>[x] <a href="http://www.ydlcq.cn/" target="_blank" rel="noopener noreferrer">预览地址<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></li> <li>[x] <a href="https://github.com/youdeliang/vuepress-theme-melodydl" target="_blank" rel="noopener noreferrer">主题插件 GitHub 地址<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></li> <li>[x] <a href="https://github.com/youdeliang/youdeliang.github.io" target="_blank" rel="noopener noreferrer">个人博客部署 GitHub 地址<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></li> <li>[x] 博客效果展示：</li></ul> <p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/daa9a1cdc40b453c85575481a83e18ed~tplv-k3u1fbpfcp-zoom-1.image" alt=""></p> <h2 id="安装主题"><a href="#安装主题" class="header-anchor">#</a> 安装主题</h2> <p>创建一个新的项目 my-blog：</p> <div class="language- extra-class"><pre class="language-text"><code>mkdir my-blog
+cd my-blog
+</code></pre></div><p>初始化 yarn 或 npm ：</p> <div class="language- extra-class"><pre class="language-text"><code>yarn init  或 npm init -y
+</code></pre></div><p>安装 vuepress 和 vuepress-theme-melodydl：</p> <div class="language- extra-class"><pre class="language-text"><code>yarn add vuepress vuepress-theme-melodydl
+或
+npm install vuepress vuepress-theme-melodydl
+</code></pre></div><p>创建 src/_posts 文件夹和 Vuepress 配置文件，项目结构大致为：</p> <div class="language- extra-class"><pre class="language-text"><code>my-blog
+├── src # Blog 源文件目录
+│   ├── .vuepress # Vuepress 目录
+│   │   └── public # Vuepress 静态资源文件
+│   │   └── config.js # Vuepress 配置文件
+│   └── about # About 页面 文件夹
+│   │   ├── index.md  # about 页面内容文件
+│   └── _posts # 博客文件夹
+│       ├── xxx.md
+│       ...
+└── package.json
+</code></pre></div><p>在 package.json 加入 script 字段：</p> <div class="language- extra-class"><pre class="language-text"><code>{
+  &quot;scripts&quot;: {
+    &quot;dev&quot;: &quot;vuepress dev src&quot;,
+    &quot;build&quot;: &quot;vuepress build src&quot;
+  }
+}
+</code></pre></div><h2 id="配置主题"><a href="#配置主题" class="header-anchor">#</a> 配置主题</h2> <p>在 src/.vuepress/config.js 中配置 Vuepress 和主题：</p> <details><summary>点击展示配置示例</summary> <div class="language- extra-class"><pre><code>module.exports = {
+    // 网站 Title
+      title: 'Top 的博客 ｜ Top Blog',
+
+      // 网站描述
+      description: '个人博客',
+
+      // 网站 favicon 图标设置等
+      head: [
+        ['link', { rel: 'icon', href: '/favicon.ico' }],
+        ['meta', { name: 'viewport', content: 'width=device-width,initial-scale=1,user-scalable=no' }]
+      ],
+
+      // 使用的主题
+      theme: 'melodydl',
+
+      // 主题配置
+      themeConfig: {
+        title: 'Top Blog',
+
+    // 个人信息（没有或不想设置的，删掉对应字段即可）
+    personalInfo: {
+
+    // 名称
+      name: 'melodydl',
+
+      // 头像 public文件夹下
+      avatar: '/avatar-top.jpeg',
+
+      // 头部背景图
+      headerBackgroundImg: '/avatar-bg.jpeg',
+
+      // 个人简介 (支持 HTML)
+      description: 'In me the tiger sniffs the rose&lt;br/&gt;心有猛虎，细嗅蔷薇',
+
+       // 电子邮箱
+      email: 'facecode@foxmail.com',
+
+      // 所在地
+      location: 'Shanghai, China'
+    },
+    // 顶部导航栏内容
+    nav: [
+      {text: 'HOME', link: '/' },
+      {text: 'ABOUT', link: '/about/'},
+      {text: 'TAGS', link: '/tags/'}
+    ],
+
+    // 首页头部标题背景图设置，图片直接放在 public 文件夹下
+    header: {
+      home: {
+        title: 'Top Blog',
+        subtitle: '好好生活，慢慢相遇',
+        headerImage: '/home-bg.jpeg'
+      },
+
+      // tag页面头部标题背景图设置，图片直接放在 public 文件夹下
+      tags: {
+        title: 'Tags',
+        subtitle: '遇见你花光了我所有的运气',
+        headerImage: '/tags-bg.jpg'
+      },
+
+      // 文章详情头部背景图
+      postHeaderImg: '/post-bg.jpeg',
+    },
+
+    // 社交平台帐号信息
+    sns: {
+      csdn: {
+        account: 'csdn',
+        link: 'https://blog.csdn.net/weixin_44002432',
+      },
+      weibo: {
+        account: 'weibo',
+        link: 'https://weibo.com/u/5656925978',
+      },
+      juejin: {
+        account: 'juejin',
+        link: 'https://juejin.im/user/3843548382238791'
+      },
+      zhihu: {
+        account: 'zhihu',
+        link: 'https://www.zhihu.com/people/sheng-tang-de-xing-kong'
+      },
+      github: {
+        account: 'github',
+        link: 'https://github.com/youdeliang'
+      }
+    },
+    // 底部 footer 的相关设置
+    footer: {
+      // gitbutton  配置
+      gitbtn: {
+        // 仓库地址
+        repository: &quot;https://ghbtns.com/github-btn.html?user=youdeliang&amp;repo=vuepress-theme-top&amp;type=star&amp;count=true&quot;,
+        frameborder: 0,
+        scrolling: 0,
+        width: &quot;80px&quot;,
+        height: &quot;20px&quot;
+      },
+
+      // 添加自定义 footer
+      custom: `Copyright &amp;copy; Top Blog 2020 &lt;br /&gt;
+        Theme By &lt;a href=&quot;https://www.vuepress.cn/&quot; target=&quot;_blank&quot;&gt;VuePress&lt;/a&gt;
+        | &lt;a href=&quot;https://www.github.com/youdeliang/&quot; target=&quot;_blank&quot;&gt;youdeliang&lt;/a&gt;`
+    },
+
+    // 分页配置
+    pagination: {
+      // 每页文章数量
+      perPage: 5,
+    },
+
+    // vssue 评论配置, 如果不需要，可以设置 comments: false
+    comments: {
+      owner: 'youdeliang',
+      repo: 'vuepress-theme-melodydl',
+      clientId: 'dfba8ecad544784fec1f',
+      clientSecret: '1358ac11bc8face24f598601991083e27372988d',
+      autoCreateIssue: false,
+    },
+  }
+}
+</code></pre></div></details> <h2 id="vssue-评论插件"><a href="#vssue-评论插件" class="header-anchor">#</a> Vssue 评论插件</h2> <p>如果你知道 Gitment 和 Gitalk，那么 Vssue 其实和它们实现的功能没什么区别 —— 在 Github 的 Issue 系统中存储评论，在你的页面上发表和展示评论，还可以编辑和删除评论，提供了 Vuepress 的插件（最初的动力就是给自己的 Vuepress 博客开启评论）。</p> <p>Vssue 评论插件使用可以查看文档手册。<a href="https://vssue.js.org/guide/" target="_blank" rel="noopener noreferrer">传送门<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a>。</p> <h2 id="about-页面配置"><a href="#about-页面配置" class="header-anchor">#</a> about 页面配置</h2> <div class="language- extra-class"><pre class="language-text"><code>---
+layout: about
+title: About
+subtitle: 你可以很好，但你无需完美
+headerImage: /about-bg.jpg # public 文件夹下的图片
+---
+
+下面为个人信息等内容...
+</code></pre></div><h2 id="创建博文"><a href="#创建博文" class="header-anchor">#</a> 创建博文</h2> <p>在 src/_posts 下创建 md 文件</p> <div class="language- extra-class"><pre class="language-text"><code>&lt;!-- _posts/2019-04-01-JS异步编程方案总结.md --&gt;
+---
+title: JS异步编程方案总结
+date: 2019-04-01
+tags:
+  - Promise
+  - JavaScript
+---
+
+本篇博客主要是对 Javcscript 异步编程方案总结
+
+more 上面的内容是摘要，将显示在目录中。
+
+&lt;!-- more --&gt;
+
+more 下面的内容只有浏览这篇文章时才会完全展示，不会显示在目录中。
+
+</code></pre></div><p>运行相应 script 生成你的博客网站</p> <div class="language- extra-class"><pre class="language-text"><code># 开发
+npm run dev
+# 构建
+npm run build
+</code></pre></div><h2 id="github-action-免费自动部署博客"><a href="#github-action-免费自动部署博客" class="header-anchor">#</a> Github Action 免费自动部署博客</h2> <p><strong>添加.github/workflows/deploy.yml 文件</strong></p> <div class="language-sh extra-class"><pre class="language-sh"><code>name: Build and Deploy
+on: <span class="token punctuation">[</span>push<span class="token punctuation">]</span> // 推送代码触发脚本
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+
+    - name: vuepress-deploy
+      uses: jenkey2011/vuepress-deploy@master
+      env:
+        ACCESS_TOKEN: <span class="token variable">${{ secrets._TOKEN }</span><span class="token punctuation">}</span> // github Token
+        TARGET_REPO: youdeliang/youdeliang.github.io  // 仓库
+
+        TARGET_BRANCH: gh-pages    // build 之后推到的分支名
+        BUILD_SCRIPT: <span class="token function">yarn</span> <span class="token operator">&amp;&amp;</span> <span class="token function">yarn</span> build
+        BUILD_DIR: src/.vuepress/dist/     //build 之后的目录
+        CNAME: www.ydlcq.cn
+</code></pre></div><p>secrets Token 生成步骤：</p> <ol><li>首先
+<img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ce64d81c1dcb4d4597af16051b7817f6~tplv-k3u1fbpfcp-watermark.image?" alt="image.png"></li> <li>下一步</li></ol> <p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cb16e70a25954186bf2810f4e9bb9626~tplv-k3u1fbpfcp-watermark.image?" alt="image.png"></p> <p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6141a82b74584d9a852cdd90a66b9647~tplv-k3u1fbpfcp-watermark.image?" alt="image.png"></p> <ol start="3"><li>修改 github 配置</li></ol> <p>首先必须将仓库名称改成<code>youdeliang.github.io</code>,用户名加<code>.github.io</code>格式，点击项目 setting。</p> <p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ebd8dd8c629d4e97b7b9053966bd51b3~tplv-k3u1fbpfcp-watermark.image?" alt="image.png"></p> <p>然后，找到<code>GitHub Pages</code>点击 Check it out here!
+找到 source 选择打包上传的分支和文件夹目录，点击 save。</p> <p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b8a647c681e24ae18ebb549f29b3f564~tplv-k3u1fbpfcp-watermark.image?" alt="image.png"></p> <p>最后生成链接就是你博客的链接。</p> <p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/87fb7e3cc5ba4c2d954deaa71ef84850~tplv-k3u1fbpfcp-watermark.image?" alt="image.png"></p> <p>其他部署具体步骤可以参考 Vuepress 官方文档。 <a href="https://vuepress.vuejs.org/zh/guide/deploy.html#github-pages" target="_blank" rel="noopener noreferrer">传送门<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></p> <h2 id="分分钟搭建博客"><a href="#分分钟搭建博客" class="header-anchor">#</a> 分分钟搭建博客</h2> <p>部署博客示范项目
+<a href="https://github.com/youdeliang/youdeliang.github.io" target="_blank" rel="noopener noreferrer">Top Blog<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a>，可以把项目直接拷过去，需要在项目中找到<code>config.js</code>和<code>package.json</code>将里面的 git 地址或重要信息修改成自己的，不懂如何修改可以查看上面详细教程（git 地址要改成自己的，其他的后面修改也可以）。运行<code>yarn install</code>, <code>yarn dev</code> 快速访问。部署方式参照上面免费部署流程，分分钟搭建漂亮的博客。</p> <h2 id="最后"><a href="#最后" class="header-anchor">#</a> 最后</h2> <p>如果觉得主题好用的话或者需要改进的地方，欢迎点赞<a href="https://github.com/youdeliang/vuepress-theme-melodydl" target="_blank" rel="noopener noreferrer">Star<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a>和提 issue，你的鼓励是对我莫大的支持，谢谢 🙏。</p></div></article> <div class="main-div vssue"><!----></div></div></main> <aside class="aside" data-v-b3fda33c data-v-b3fda33c><div class="info-card main-div" data-v-1311ce9e data-v-b3fda33c><div class="info-card-header" style="background-size:cover;background-repeat:no-repeat;background-position:center;background-attachment:scroll;background-image:url(/avatar-bg.jpeg);" data-v-1311ce9e><img src="/avatar-top.jpeg" alt="melodydl" class="info-avatar" data-v-1311ce9e></div> <div class="info-card-body" data-v-1311ce9e><section class="info-name" data-v-1311ce9e>
+      melodydl
+    </section> <section class="info-desc" data-v-1311ce9e>In me the tiger sniffs the rose<br/>心有猛虎，细嗅蔷薇</section> <section class="info-contact" data-v-1311ce9e><section data-v-1311ce9e><span data-v-1311ce9e data-v-1311ce9e><svg class="icon" style="font-size:1em;" data-v-1311ce9e data-v-1311ce9e><use xlink:href="#icon-location" data-v-1311ce9e data-v-1311ce9e></use></svg><span class="info-text" data-v-1311ce9e data-v-1311ce9e>
+          Shanghai, China
+        </span></span></section> <!----> <section data-v-1311ce9e><span data-v-1311ce9e data-v-1311ce9e><svg class="icon" style="font-size:1em;" data-v-1311ce9e data-v-1311ce9e><use xlink:href="#icon-email" data-v-1311ce9e data-v-1311ce9e></use></svg><span class="info-text" data-v-1311ce9e data-v-1311ce9e>
+          facecode@foxmail.com
+        </span></span></section></section></div> <div class="info-card-footer" data-v-1311ce9e><p class="footer-sns-link" data-v-1311ce9e><a target="_blank" href="https://blog.csdn.net/weixin_44002432" class="sns-link" data-v-1311ce9e><span class="sns-icon" data-v-1311ce9e data-v-1311ce9e><svg class="icon" style="font-size:35px;" data-v-1311ce9e data-v-1311ce9e><use xlink:href="#icon-csdn" data-v-1311ce9e data-v-1311ce9e></use></svg></span></a><a target="_blank" href="https://weibo.com/u/5656925978" class="sns-link" data-v-1311ce9e><span class="sns-icon" data-v-1311ce9e data-v-1311ce9e><svg class="icon" style="font-size:35px;" data-v-1311ce9e data-v-1311ce9e><use xlink:href="#icon-weibo" data-v-1311ce9e data-v-1311ce9e></use></svg></span></a><a target="_blank" href="https://juejin.im/user/5ce784a0f265da1b8333673c" class="sns-link" data-v-1311ce9e><span class="sns-icon" data-v-1311ce9e data-v-1311ce9e><svg class="icon" style="font-size:35px;" data-v-1311ce9e data-v-1311ce9e><use xlink:href="#icon-juejin" data-v-1311ce9e data-v-1311ce9e></use></svg></span></a><a target="_blank" href="https://www.zhihu.com/people/sheng-tang-de-xing-kong" class="sns-link" data-v-1311ce9e><span class="sns-icon" data-v-1311ce9e data-v-1311ce9e><svg class="icon" style="font-size:35px;" data-v-1311ce9e data-v-1311ce9e><use xlink:href="#icon-zhihu" data-v-1311ce9e data-v-1311ce9e></use></svg></span></a><a target="_blank" href="https://github.com/youdeliang" class="sns-link" data-v-1311ce9e><span class="sns-icon" data-v-1311ce9e data-v-1311ce9e><svg class="icon" style="font-size:35px;" data-v-1311ce9e data-v-1311ce9e><use xlink:href="#icon-github" data-v-1311ce9e data-v-1311ce9e></use></svg></span></a></p></div></div> <div class="post-toc main-div aside-toc" style="position:relative;top:0;width:0px;" data-v-b3fda33c><h4>- CATALOG</h4> <div class="post-nav-toc"><ul><li><a href="/posts/2021/12/09/vuepress%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E6%8C%87%E5%8D%97.html#前言">前言</a></li><li><a href="/posts/2021/12/09/vuepress%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E6%8C%87%E5%8D%97.html#速览">速览</a></li><li><a href="/posts/2021/12/09/vuepress%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E6%8C%87%E5%8D%97.html#安装主题">安装主题</a></li><li><a href="/posts/2021/12/09/vuepress%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E6%8C%87%E5%8D%97.html#配置主题">配置主题</a></li><li><a href="/posts/2021/12/09/vuepress%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E6%8C%87%E5%8D%97.html#vssue-评论插件">Vssue 评论插件</a></li><li><a href="/posts/2021/12/09/vuepress%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E6%8C%87%E5%8D%97.html#about-页面配置">about 页面配置</a></li><li><a href="/posts/2021/12/09/vuepress%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E6%8C%87%E5%8D%97.html#创建博文">创建博文</a></li><li><a href="/posts/2021/12/09/vuepress%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E6%8C%87%E5%8D%97.html#github-action-免费自动部署博客">Github Action 免费自动部署博客</a></li><li><a href="/posts/2021/12/09/vuepress%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E6%8C%87%E5%8D%97.html#分分钟搭建博客">分分钟搭建博客</a></li><li><a href="/posts/2021/12/09/vuepress%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E6%8C%87%E5%8D%97.html#最后">最后</a></li></ul></div></div></aside></div> <footer class="footer" data-v-7f2e4136><p class="footer-sns-link"><a target="_blank" href="https://blog.csdn.net/weixin_44002432" class="sns-link"><span class="sns-icon"><svg class="icon" style="font-size:40px;"><use xlink:href="#icon-csdn"></use></svg></span></a><a target="_blank" href="https://weibo.com/u/5656925978" class="sns-link"><span class="sns-icon"><svg class="icon" style="font-size:40px;"><use xlink:href="#icon-weibo"></use></svg></span></a><a target="_blank" href="https://juejin.im/user/5ce784a0f265da1b8333673c" class="sns-link"><span class="sns-icon"><svg class="icon" style="font-size:40px;"><use xlink:href="#icon-juejin"></use></svg></span></a><a target="_blank" href="https://www.zhihu.com/people/sheng-tang-de-xing-kong" class="sns-link"><span class="sns-icon"><svg class="icon" style="font-size:40px;"><use xlink:href="#icon-zhihu"></use></svg></span></a><a target="_blank" href="https://github.com/youdeliang" class="sns-link"><span class="sns-icon"><svg class="icon" style="font-size:40px;"><use xlink:href="#icon-github"></use></svg></span></a></p> <div class="copyright"><span id="custom">Copyright &copy; Top Blog 2020 <br /> 
+        Theme By <a href="https://www.vuepress.cn/" target="_blank">VuePress</a>
+        | <a href="https://www.github.com/youdeliang/" target="_blank">youdeliang</a></span> <iframe src="https://ghbtns.com/github-btn.html?user=youdeliang&amp;repo=vuepress-theme-melodydl&amp;type=star&amp;count=true" frameborder="0" scrolling="0" width="80px" height="20px" class="footer-btn" style="margin-left: 2px; margin-bottom:-5px;"></iframe></div></footer></div><div class="global-ui"><!----><!----></div></div>
+    <script src="/assets/js/app.c74921c7.js" defer></script><script src="/assets/js/6.8a44c677.js" defer></script><script src="/assets/js/15.58f52d14.js" defer></script>
+  </body>
+</html>

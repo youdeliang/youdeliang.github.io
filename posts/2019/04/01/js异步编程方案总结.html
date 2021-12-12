@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>JS异步编程方案总结 | Top 的博客 ｜ Top Blog</title>
+    <meta name="generator" content="VuePress 1.4.1">
+    <link rel="icon" href="/favicon.ico">
+    <meta name="description" content="个人博客">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+    <link rel="preload" href="/assets/css/0.styles.62d8fb78.css" as="style"><link rel="preload" href="/assets/js/app.c74921c7.js" as="script"><link rel="preload" href="/assets/js/6.8a44c677.js" as="script"><link rel="preload" href="/assets/js/7.e68f402f.js" as="script"><link rel="prefetch" href="/assets/js/10.5e2da4d1.js"><link rel="prefetch" href="/assets/js/11.220c158d.js"><link rel="prefetch" href="/assets/js/12.b1e6b80c.js"><link rel="prefetch" href="/assets/js/13.6773e801.js"><link rel="prefetch" href="/assets/js/14.ac840d4b.js"><link rel="prefetch" href="/assets/js/15.58f52d14.js"><link rel="prefetch" href="/assets/js/16.976d494d.js"><link rel="prefetch" href="/assets/js/17.d47fb699.js"><link rel="prefetch" href="/assets/js/18.74c455b7.js"><link rel="prefetch" href="/assets/js/2.26db6680.js"><link rel="prefetch" href="/assets/js/3.e6f78273.js"><link rel="prefetch" href="/assets/js/4.9339957e.js"><link rel="prefetch" href="/assets/js/5.9dcceca0.js"><link rel="prefetch" href="/assets/js/8.bf682037.js"><link rel="prefetch" href="/assets/js/9.9ac068c9.js">
+    <link rel="stylesheet" href="/assets/css/0.styles.62d8fb78.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div id="global-layout" data-v-7f2e4136><header class="header-container" style="background-size:cover;background-repeat:no-repeat;background-position:center;background-attachment:scroll;background-image:url(/post-bg.jpeg);" data-v-93921ff8 data-v-7f2e4136><nav class="navbar" style="position:absolute;opacity:1;transition:all 0.5s ease-in-out;" data-v-93921ff8><a href="/" class="navbar-link router-link-active">
+    Top Blog
+  </a> <ul class="navbar-links"><li><a href="/" class="router-link-active">
+        HOME
+      </a></li><li><a href="/about/">
+        ABOUT
+      </a></li><li><a href="/tags/">
+        TAGS
+      </a></li></ul> <div id="nav-icon"><span></span><span></span><span></span></div></nav> <div class="header-title" data-v-93921ff8 data-v-93921ff8><h1 data-v-93921ff8>JS异步编程方案总结</h1> <p data-v-93921ff8></p></div></header> <div class="container" data-v-b3fda33c data-v-7f2e4136><main class="main" style="width:60%;" data-v-b3fda33c><div class="post" data-v-b3fda33c data-v-b3fda33c><article class="main-div"><div class="post-content content content__default"><p>本篇博客主要是对 Javcscript 异步编程方案总结
+</p> <h2 id="前言"><a href="#前言" class="header-anchor">#</a> 前言</h2> <p>Javcscript是单线程机制，单线程模型指的是，JavaScript只在一个线程上运行。也就是说，JavaScript 同时只能执行一个任务，其他任务都必须在后面排队等待。JavaScript 之所以采用单线程，而不是多线程，原因是不想让浏览器变得太复杂，因为多线程需要共享资源、且有可能修改彼此的运行结果，对于一种网页脚本语言来说，这就太复杂了。</p> <h2 id="异步编程解决了什么问题？"><a href="#异步编程解决了什么问题？" class="header-anchor">#</a> 异步编程解决了什么问题？</h2> <p>单线程的好处是实现起来比较简单，执行环境相对单纯；坏处是只要有一个任务耗时很长，后面的任务都必须排队等着，会拖延整个程序的执行。常见的浏览器无响应（假死），往往就是因为某一段JavaScript代码长时间运行（比如死循环），导致整个页面卡在这个地方，其他任务无法执行。</p> <p>为了解决JavaScript执行任务只能一个一个排队执行得问题（同步执行）引入了异步编程方案来实现（异步并行执行任务），对于几种常见异步编程方案有：</p> <ul><li>回调函数</li> <li>事件监听</li> <li>发布/订阅</li> <li>Promise对象</li> <li>Generator/yield（ES6）</li> <li>async/await（ES7）</li></ul> <h2 id="同步和异步任务"><a href="#同步和异步任务" class="header-anchor">#</a> 同步和异步任务</h2> <p>程序里面所有的任务，可以分成两类：同步任务（synchronous）和异步任务（asynchronous）。</p> <ul><li><p><code>同步任务</code>:是指那些没有被引擎挂起、在主线程上排队执行的任务。只有前一个任务执行完毕，才能执行后一个任务。</p></li> <li><p><code>异步任务</code>:是指那些被引擎放在一边，不进入主线程、而进入任务队列的任务。</p></li></ul> <p>只有引擎认为某个异步任务可以执行了（比如 Ajax 操作从服务器得到了结果），该任务（采用回调函数的形式）才会进入主线程执行。<code>JavaScript</code>运行时，除了一个正在运行的主线程，引擎还提供一个任务队列（task queue），里面是各种需要当前程序处理的异步任务。</p> <p>异步任务的写法通常是<code>回调函数</code>。一旦异步任务重新进入主线程，就会执行对应的回调函数。如果一个异步任务没有回调函数，就不会进入任务队列，也就是说，不会重新进入主线程，因为没有用回调函数指定下一步的操作。</p> <p><strong>下面总结一下异步操作的几种模式。</strong></p> <h2 id="_1、回调函数"><a href="#_1、回调函数" class="header-anchor">#</a> 1、回调函数</h2> <p>回调函数是异步操作最基本的方法，一般指函数里面嵌套函数来调用其他函数。</p> <div class="language- extra-class"><pre class="language-text"><code>function f1(callback) {
+  // ...
+  callback();
+}
+
+function f2() {
+  // ...
+}
+
+f1(f2);
+</code></pre></div><ul><li><code>优点</code>：简单、容易理解和实现。</li> <li><code>缺点</code>：不利于代码的阅读和维护，容易形成‘回调地狱’，各个部分之间高度耦合（coupling），使得程序结构混乱、流程难以追踪（尤其是多个回调函数嵌套的情况），而且每个任务只能指定一个回调函数。</li></ul> <h2 id="_2、事件监听"><a href="#_2、事件监听" class="header-anchor">#</a> 2、事件监听</h2> <p>事件监听是采用事件驱动模式。异步任务的执行不取决于代码的顺序，而取决于某个事件是否发生。</p> <div class="language- extra-class"><pre class="language-text"><code>f1.on('done', f2);
+
+function f1() {
+  setTimeout(function () {
+    // ...
+    f1.trigger('done'); // 触发done事情
+  }, 1000);
+}
+</code></pre></div><p>上面代码使用JQuery编写， 首先，为<code>f1</code>绑定一个事件，当<code>f1</code>发生<code>done</code>事件，就执行<code>f2</code>，而<code>f1</code>执行完成后，立即触发<code>done</code>事件，从而开始执行<code>f2</code>。</p> <ul><li><code>优点</code>：比较容易理解，可以绑定多个事件，每个事件可以指定多个回调函数，而且可以&quot;去耦合&quot;（Decoupling），有利于实现模块化。</li> <li><code>缺点</code>：整个程序都要变成事件驱动型，运行流程会变得很不清晰。</li></ul> <h2 id="_3、发布-订阅"><a href="#_3、发布-订阅" class="header-anchor">#</a> 3、发布/订阅</h2> <p>事件完全可以理解成<code>信号</code>，如果存在一个<code>信号中心</code>，某个任务执行完成，就向信号中心<code>发布</code>一个信号，其他任务可以向信号中心<code>订阅</code>这个信号，从而知道什么时候自己可以开始执行。这就叫做<code>发布/订阅模式</code>，又称<code>观察者模式</code>。</p> <div class="language- extra-class"><pre class="language-text"><code>// 订阅信号
+jQuery.subscribe('done', f2);
+
+function f1() {
+  setTimeout(function () {
+    // ...
+    // 向信号中心jQuery发布done信号,从而引发f2的执行
+    jQuery.publish('done');
+  }, 1000);
+}
+
+// 取消订阅
+jQuery.unsubscribe('done', f2);
+</code></pre></div><p>上面代码使用JQuery编写，首先，<code>f2</code>向信号中心<code>jQuery</code>订阅<code>done</code>信号。<code>f1</code>执行完成后，向信号中心<code>jQuery</code>发布<code>done</code>信号，从而引发<code>f2</code>的执行。</p> <p>这种方法的性质与<code>事件监听</code>类似，但是明显优于后者。因为可以通过查看<code>消息中心</code>，了解存在多少信号、每个信号有多少订阅者，从而监控程序的运行。</p> <h2 id="_4、promise"><a href="#_4、promise" class="header-anchor">#</a> 4、Promise</h2> <p><code>Promise</code> 实际就是一个对象， 从它可以获得异步操作的消息，<code>Promise</code> 对象有三种状态，<code>pending</code>(进行中)、<code>fulfilled</code>（已成功）和<code>rejected</code>（已失败）。<code>Promise</code> 的状态一旦改变之后，就不会在发生任何变化,将回调函数变成了链式调用。</p> <p><code>Promise</code> 的设计思想是，每一个异步任务返回一个<code>Promise</code>对象，该对象有一个<code>then</code>方法，用来指定下一步的回调函数。</p> <div class="language- extra-class"><pre class="language-text"><code>var p1 = new Promise(f1);
+p1.then(f2);
+</code></pre></div><p>上面代码中，<code>f1</code>的异步操作执行完成，就会执行<code>f2</code>。</p> <div class="language- extra-class"><pre class="language-text"><code>function f1(){
+    var dfd = $.Deferred();
+    setTimeout(function () {
+        // f1的任务代码
+        dfd.resolve();
+    }, 500);
+    return dfd.promise;
+}
+</code></pre></div><p>每次调用返回的都是一个新的Promise实例(then可用链式调用的原因)</p> <div class="language- extra-class"><pre class="language-text"><code>// 传统写法
+step1(function (value1) {
+  step2(value1, function(value2) {
+    step3(value2, function(value3) {
+      step4(value3, function(value4) {
+        // ...
+      });
+    });
+  });
+});
+
+// Promise 的写法
+(new Promise(step1))
+  .then(step2)
+  .then(step3)
+  .then(step4);
+</code></pre></div><p>传统的写法可能需要把<code>f2</code>作为回调函数传入<code>f1</code>，比如写成<code>f1(f2)</code>，异步操作完成后，在<code>f1</code>内部调用<code>f2</code>。<code>Promise</code>使得<code>f1</code>和<code>f2</code>变成了链式写法。不仅改善了可读性，而且对于多层嵌套的回调函数尤其方便。</p> <h2 id="_5、generator"><a href="#_5、generator" class="header-anchor">#</a> 5、Generator</h2> <p><code>Generator</code> 函数是协程在 <code>ES6</code> 的实现，最大特点就是可以交出函数的执行权（即暂停执行）</p> <p><code>Generator</code> 函数是一个状态机，封装了多个内部状态。执行 <code>Generator</code> 函数会返回一个遍历器对象，使用该对象的 <code>next()</code> 方法，可以遍历 <code>Generator</code> 函数内部的每一个状态，直到 <code>return</code> 语句。</p> <p><code>Generator</code> 函数的特征:</p> <ul><li><code>function</code> 关键字与函数名之间有一个星号</li> <li>函数体内部使用 <code>yield</code> 表达式，<code>yield</code> 是暂停执行的标记</li> <li><code>next()</code> 方法遇到 <code>yield</code> 表达式，就暂停执行后面的操作,并返回后面的值。</li></ul> <div class="language- extra-class"><pre class="language-text"><code>function* gen(x){
+  var y = yield x + 2;
+  return y;
+}
+
+var g = gen(1);
+g.next() // { value: 3, done: false }
+g.next(2) // { value: 2, done: true }
+</code></pre></div><p>上面代码中，第一个 <code>next</code> 方法的 <code>value</code> 属性，返回表达式 <code>x + 2</code> 的值<code>3</code>。第二个 <code>next</code> 方法带有参数<code>2</code>，这个参数可以传入 <code>Generator</code> 函数，作为上个阶段异步任务的返回结果，被函数体内的变量 <code>y</code> 接收。因此，这一步的 <code>value</code> 属性，返回的就是<code>2</code>（变量 y 的值）。</p> <h2 id="_6、async-await"><a href="#_6、async-await" class="header-anchor">#</a> 6、async/await</h2> <p><code>async</code> 函数就是 <code>Generator</code> 函数的语法糖。<code>async</code> 函数返回一个 <code>Promise</code> 对象，可以使用 <code>then</code> 方法添加回调函数。当函数执行的时候，一旦遇到 <code>await</code> 就会先返回，等到触发的异步操作完成，再接着执行函数体内后面的语句。</p> <p><code>async/await</code>的特征有：</p> <ul><li><code>async/await</code>是基于<code>Promise</code>实现的，它不能用于普通的回调函数。</li> <li><code>async/await</code>与<code>Promise</code>一样，是非阻塞的。</li> <li><code>async/await</code>使得异步代码看起来像同步代码，这正是它的魔力所在。</li></ul> <div class="language- extra-class"><pre class="language-text"><code>async function async1() {
+  return 2
+}
+console.log(async1()) // Promise {&lt;resolved&gt;: 2}
+</code></pre></div><p>上面代码中，函数前面加上 <code>async</code> 就会返回一个 <code>promise</code> 对象。</p> <div class="language- extra-class"><pre class="language-text"><code>const fs = require('fs');
+
+const readFile = function (fileName) {
+  return new Promise(function (resolve, reject) {
+    fs.readFile(fileName, function(error, data) {
+      if (error) return reject(error);
+      resolve(data);
+    });
+  });
+};
+// Generator 函数写法
+const gen = function* () {
+  const f1 = yield readFile('/etc/fstab');
+  const f2 = yield readFile('/etc/shells');
+  console.log(f1.toString());
+  console.log(f2.toString());
+};
+
+// aynsc 函数写法
+const asyncReadFile = async function () {
+  const f1 = await readFile('/etc/fstab');
+  const f2 = await readFile('/etc/shells');
+  console.log(f1.toString());
+  console.log(f2.toString());
+};
+</code></pre></div><p>一比较就会发现，<code>async</code>函数就是将<code>Generator</code>函数的星号<code>*</code>替换成<code>async</code>，将<code>yield</code>替换成<code>await</code>，仅此而已。</p> <p><code>优点</code>：更好的语义,更广的适用性,返回值是 Promise。</p> <h2 id="总结"><a href="#总结" class="header-anchor">#</a> 总结</h2> <p>JS 异步编程发展史：<code>callback</code> -&gt; <code>promise</code> -&gt; <code>generator</code> -&gt; <code>async + await</code>。<code>async/await</code>函数的实现是将<code>Generator</code>函数和自动执行器，包装在一个函数里。它也是目前异步最好的解决方案了。</p></div></article> <div class="main-div vssue"><!----></div></div></main> <aside class="aside" data-v-b3fda33c data-v-b3fda33c><div class="info-card main-div" data-v-1311ce9e data-v-b3fda33c><div class="info-card-header" style="background-size:cover;background-repeat:no-repeat;background-position:center;background-attachment:scroll;background-image:url(/avatar-bg.jpeg);" data-v-1311ce9e><img src="/avatar-top.jpeg" alt="melodydl" class="info-avatar" data-v-1311ce9e></div> <div class="info-card-body" data-v-1311ce9e><section class="info-name" data-v-1311ce9e>
+      melodydl
+    </section> <section class="info-desc" data-v-1311ce9e>In me the tiger sniffs the rose<br/>心有猛虎，细嗅蔷薇</section> <section class="info-contact" data-v-1311ce9e><section data-v-1311ce9e><span data-v-1311ce9e data-v-1311ce9e><svg class="icon" style="font-size:1em;" data-v-1311ce9e data-v-1311ce9e><use xlink:href="#icon-location" data-v-1311ce9e data-v-1311ce9e></use></svg><span class="info-text" data-v-1311ce9e data-v-1311ce9e>
+          Shanghai, China
+        </span></span></section> <!----> <section data-v-1311ce9e><span data-v-1311ce9e data-v-1311ce9e><svg class="icon" style="font-size:1em;" data-v-1311ce9e data-v-1311ce9e><use xlink:href="#icon-email" data-v-1311ce9e data-v-1311ce9e></use></svg><span class="info-text" data-v-1311ce9e data-v-1311ce9e>
+          facecode@foxmail.com
+        </span></span></section></section></div> <div class="info-card-footer" data-v-1311ce9e><p class="footer-sns-link" data-v-1311ce9e><a target="_blank" href="https://blog.csdn.net/weixin_44002432" class="sns-link" data-v-1311ce9e><span class="sns-icon" data-v-1311ce9e data-v-1311ce9e><svg class="icon" style="font-size:35px;" data-v-1311ce9e data-v-1311ce9e><use xlink:href="#icon-csdn" data-v-1311ce9e data-v-1311ce9e></use></svg></span></a><a target="_blank" href="https://weibo.com/u/5656925978" class="sns-link" data-v-1311ce9e><span class="sns-icon" data-v-1311ce9e data-v-1311ce9e><svg class="icon" style="font-size:35px;" data-v-1311ce9e data-v-1311ce9e><use xlink:href="#icon-weibo" data-v-1311ce9e data-v-1311ce9e></use></svg></span></a><a target="_blank" href="https://juejin.im/user/5ce784a0f265da1b8333673c" class="sns-link" data-v-1311ce9e><span class="sns-icon" data-v-1311ce9e data-v-1311ce9e><svg class="icon" style="font-size:35px;" data-v-1311ce9e data-v-1311ce9e><use xlink:href="#icon-juejin" data-v-1311ce9e data-v-1311ce9e></use></svg></span></a><a target="_blank" href="https://www.zhihu.com/people/sheng-tang-de-xing-kong" class="sns-link" data-v-1311ce9e><span class="sns-icon" data-v-1311ce9e data-v-1311ce9e><svg class="icon" style="font-size:35px;" data-v-1311ce9e data-v-1311ce9e><use xlink:href="#icon-zhihu" data-v-1311ce9e data-v-1311ce9e></use></svg></span></a><a target="_blank" href="https://github.com/youdeliang" class="sns-link" data-v-1311ce9e><span class="sns-icon" data-v-1311ce9e data-v-1311ce9e><svg class="icon" style="font-size:35px;" data-v-1311ce9e data-v-1311ce9e><use xlink:href="#icon-github" data-v-1311ce9e data-v-1311ce9e></use></svg></span></a></p></div></div> <div class="post-toc main-div aside-toc" style="position:relative;top:0;width:0px;" data-v-b3fda33c><h4>- CATALOG</h4> <div class="post-nav-toc"><ul><li><a href="/posts/2019/04/01/js%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93.html#前言">前言</a></li><li><a href="/posts/2019/04/01/js%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93.html#异步编程解决了什么问题？">异步编程解决了什么问题？</a></li><li><a href="/posts/2019/04/01/js%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93.html#同步和异步任务">同步和异步任务</a></li><li><a href="/posts/2019/04/01/js%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93.html#_1、回调函数">1、回调函数</a></li><li><a href="/posts/2019/04/01/js%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93.html#_2、事件监听">2、事件监听</a></li><li><a href="/posts/2019/04/01/js%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93.html#_3、发布-订阅">3、发布/订阅</a></li><li><a href="/posts/2019/04/01/js%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93.html#_4、promise">4、Promise</a></li><li><a href="/posts/2019/04/01/js%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93.html#_5、generator">5、Generator</a></li><li><a href="/posts/2019/04/01/js%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93.html#_6、async-await">6、async/await</a></li><li><a href="/posts/2019/04/01/js%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B%E6%96%B9%E6%A1%88%E6%80%BB%E7%BB%93.html#总结">总结</a></li></ul></div></div></aside></div> <footer class="footer" data-v-7f2e4136><p class="footer-sns-link"><a target="_blank" href="https://blog.csdn.net/weixin_44002432" class="sns-link"><span class="sns-icon"><svg class="icon" style="font-size:40px;"><use xlink:href="#icon-csdn"></use></svg></span></a><a target="_blank" href="https://weibo.com/u/5656925978" class="sns-link"><span class="sns-icon"><svg class="icon" style="font-size:40px;"><use xlink:href="#icon-weibo"></use></svg></span></a><a target="_blank" href="https://juejin.im/user/5ce784a0f265da1b8333673c" class="sns-link"><span class="sns-icon"><svg class="icon" style="font-size:40px;"><use xlink:href="#icon-juejin"></use></svg></span></a><a target="_blank" href="https://www.zhihu.com/people/sheng-tang-de-xing-kong" class="sns-link"><span class="sns-icon"><svg class="icon" style="font-size:40px;"><use xlink:href="#icon-zhihu"></use></svg></span></a><a target="_blank" href="https://github.com/youdeliang" class="sns-link"><span class="sns-icon"><svg class="icon" style="font-size:40px;"><use xlink:href="#icon-github"></use></svg></span></a></p> <div class="copyright"><span id="custom">Copyright &copy; Top Blog 2020 <br /> 
+        Theme By <a href="https://www.vuepress.cn/" target="_blank">VuePress</a>
+        | <a href="https://www.github.com/youdeliang/" target="_blank">youdeliang</a></span> <iframe src="https://ghbtns.com/github-btn.html?user=youdeliang&amp;repo=vuepress-theme-melodydl&amp;type=star&amp;count=true" frameborder="0" scrolling="0" width="80px" height="20px" class="footer-btn" style="margin-left: 2px; margin-bottom:-5px;"></iframe></div></footer></div><div class="global-ui"><!----><!----></div></div>
+    <script src="/assets/js/app.c74921c7.js" defer></script><script src="/assets/js/6.8a44c677.js" defer></script><script src="/assets/js/7.e68f402f.js" defer></script>
+  </body>
+</html>

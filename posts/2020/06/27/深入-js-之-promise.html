@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>深入JS之Promise | Top 的博客 ｜ Top Blog</title>
+    <meta name="generator" content="VuePress 1.4.1">
+    <link rel="icon" href="/favicon.ico">
+    <meta name="description" content="个人博客">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+    <link rel="preload" href="/assets/css/0.styles.62d8fb78.css" as="style"><link rel="preload" href="/assets/js/app.c74921c7.js" as="script"><link rel="preload" href="/assets/js/6.8a44c677.js" as="script"><link rel="preload" href="/assets/js/13.6773e801.js" as="script"><link rel="prefetch" href="/assets/js/10.5e2da4d1.js"><link rel="prefetch" href="/assets/js/11.220c158d.js"><link rel="prefetch" href="/assets/js/12.b1e6b80c.js"><link rel="prefetch" href="/assets/js/14.ac840d4b.js"><link rel="prefetch" href="/assets/js/15.58f52d14.js"><link rel="prefetch" href="/assets/js/16.976d494d.js"><link rel="prefetch" href="/assets/js/17.d47fb699.js"><link rel="prefetch" href="/assets/js/18.74c455b7.js"><link rel="prefetch" href="/assets/js/2.26db6680.js"><link rel="prefetch" href="/assets/js/3.e6f78273.js"><link rel="prefetch" href="/assets/js/4.9339957e.js"><link rel="prefetch" href="/assets/js/5.9dcceca0.js"><link rel="prefetch" href="/assets/js/7.e68f402f.js"><link rel="prefetch" href="/assets/js/8.bf682037.js"><link rel="prefetch" href="/assets/js/9.9ac068c9.js">
+    <link rel="stylesheet" href="/assets/css/0.styles.62d8fb78.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div id="global-layout" data-v-7f2e4136><header class="header-container" style="background-size:cover;background-repeat:no-repeat;background-position:center;background-attachment:scroll;background-image:url(/post-bg.jpeg);" data-v-93921ff8 data-v-7f2e4136><nav class="navbar" style="position:absolute;opacity:1;transition:all 0.5s ease-in-out;" data-v-93921ff8><a href="/" class="navbar-link router-link-active">
+    Top Blog
+  </a> <ul class="navbar-links"><li><a href="/" class="router-link-active">
+        HOME
+      </a></li><li><a href="/about/">
+        ABOUT
+      </a></li><li><a href="/tags/">
+        TAGS
+      </a></li></ul> <div id="nav-icon"><span></span><span></span><span></span></div></nav> <div class="header-title" data-v-93921ff8 data-v-93921ff8><h1 data-v-93921ff8>深入JS之Promise</h1> <p data-v-93921ff8></p></div></header> <div class="container" data-v-b3fda33c data-v-7f2e4136><main class="main" style="width:60%;" data-v-b3fda33c><div class="post" data-v-b3fda33c data-v-b3fda33c><article class="main-div"><div class="post-content content content__default"><p>本篇博客主要是对 Javcscript 异步编程 Promise 的学习理解
+</p> <h2 id="基本概念"><a href="#基本概念" class="header-anchor">#</a> 基本概念</h2> <p><strong>MDN 对 Promise 的定义：</strong></p> <blockquote><p>Promise 是一个对象，它代表了一个异步操作的最终完成或者失败。</p></blockquote> <p>Promise 解决的主要是异步编码风格的问题，即解决回调地狱的问题。在开发一些稍复杂点项目时，你会发现，如果嵌套了太多的回调函数就很容易使得自己陷入了回调地狱，不能自拔。你可以参考下面这段让人凌乱的代码：</p> <div class="language- extra-class"><pre class="language-text"><code>XFetch(makeRequest('https://xxx'),
+      function resolve(response) {
+          console.log(response)
+          XFetch(makeRequest('https://xxx'),
+              function resolve(response) {
+                  console.log(response)
+                  XFetch(makeRequest('https://xxx')
+                      function resolve(response) {
+                          console.log(response)
+                      }, function reject(e) {
+                          console.log(e)
+                      })
+              }, function reject(e) {
+                  console.log(e)
+              })
+      }, function reject(e) {
+          console.log(e)
+      })
+</code></pre></div><p>这段代码是先请求第一个接口，如果请求成功的话，那么再请求第二个接口，如果再次请求成功的话，就继续请求最后一个接口。也就是说这段代码用了三层嵌套请求，就已经让代码变得混乱不堪，当上述需求中出现第四个请求（甚至更多）仍然依赖上一个请求的时候，代码就会变成一场灾难。</p> <p>这段代码之所以看上去很乱，归结其原因有两点：</p> <ul><li><strong>第一是嵌套调用</strong>，下面的任务依赖上个任务的请求结果，并<strong>在上个任务的回调函数内部执行新的业务逻辑</strong>，这样当嵌套层次多了之后，代码的可读性就变得非常差了。</li> <li><strong>第二是任务的不确定性</strong>，执行每个任务都有两种可能的结果（成功或者失败），所以体现在代码中就需要对每个任务的执行结果做两次判断，这种对每个任务都要进行一次额外的错误处理的方式，明显增加了代码的混乱程度。</li></ul> <p>这时，我们可能会希望：</p> <ul><li>[x] <strong>第一是消灭嵌套调用；</strong></li> <li>[x] <strong>第二是合并多个任务的错误处理</strong>。</li></ul> <p><strong>Promise 主要通过下面两步解决嵌套回调问题的。</strong></p> <ol><li><p><strong>首先，Promise 实现了回调函数的延时绑定</strong>。回调函数的延时绑定在代码上体现就是先创建 Promise 对象 promise1，通过 Promise 的构造函数 executor 来执行业务逻辑；创建好 Promise 对象 promise1 之后，再使用 promise1.then 来设置回调函数。</p></li> <li><p><strong>其次，需要将回调函数 onResolve 的返回值穿透到最外层</strong>。因为我们会根据 onResolve 函数的传入值来决定创建什么类型的 Promise 任务，创建好的 Promise 对象需要返回到最外层，这样就可以摆脱嵌套循环了。代码如下：</p></li></ol> <div class="language- extra-class"><pre class="language-text"><code>let promise1 = new Promise((resolve, reject) =&gt; {
+    console.log(1)
+    resolve('success')
+})
+
+// then 方法延迟绑定 返回值穿透赋给 p2
+let p2 = promise1.then(res =&gt; {
+    console.log(res)
+    return 2
+})
+setTimeout(() =&gt; {
+   console.log(p2) 
+})
+// 输出 1 ,success, 2
+</code></pre></div><p>Promise 通过回调函数延迟绑定和回调函数返回值穿透的技术，解决了循环嵌套。
+接下来我们再来看看 Promise 是怎么处理异常的：</p> <div class="language- extra-class"><pre class="language-text"><code>
+function executor(resolve, reject) {
+    let rand = Math.random();
+    console.log(1)
+    console.log(rand)
+    if (rand &gt; 0.5)
+        resolve()
+    else
+        reject()
+}
+var p0 = new Promise(executor);
+
+var p1 = p0.then((value) =&gt; {
+    console.log(&quot;succeed-1&quot;)
+    return new Promise(executor)
+})
+p1.catch((error) =&gt; {
+    console.log(&quot;error&quot;)
+})
+console.log(2)
+</code></pre></div><p>上面 p0, p1 无论哪个对象报错都可以在最后 catch 里面捕获到。
+之所以可以使用最后一个对象来捕获所有异常，是因为 Promise 对象的错误具有“冒泡”性质，会一直向后传递，直到被 onReject 函数处理或 catch 语句捕获为止。具备了这样“冒泡”的特性后，就不需要在每个 Promise 对象中单独捕获异常了。</p> <h2 id="原理剖析"><a href="#原理剖析" class="header-anchor">#</a> 原理剖析</h2> <p>上面我们了解 Promise 的实现主要是通过延迟回调、返回值穿透以及错误的‘冒泡’捕获。</p> <p>接下来，我们通过源码实现来更深层次的理解这些技术实现，深入理解 Promise。</p> <h3 id="极简promise雏形"><a href="#极简promise雏形" class="header-anchor">#</a> 极简Promise雏形</h3> <div class="language- extra-class"><pre class="language-text"><code>function Promise(executor) {
+  this.value = null   // 存储 resolved 的值
+  this.reason = null // 存储 rejected 的值
+  this.onFulfilledArray = [] // 可能同时有多个回调，用数组来存储
+  this.onRejectedArray = [] //可能同时有多个回调，用数组来存储
+
+  const resolve = value =&gt; {
+    this.value = value
+    this.onFulfilledArray.forEach(func =&gt; {
+      func(value)
+    })
+  }
+
+  const reject = reason =&gt; {
+    this.reason = reason
+    this.onRejectedArray.forEach(func =&gt; {
+      func(reason)
+    })
+  }
+  
+   executor(resolve, reject)
+}
+
+Promise.prototype.then = function(onfulfilled, onrejected) {
+    this.onFulfilledArray.push(onfulfilled)
+    this.onRejectedArray.push(onrejected)
+}
+</code></pre></div><p>上述代码比较简单，大概的逻辑是这样的：</p> <ol><li>调用 then 方法，将想要在 Promise 异步操作成功时执行的回调放入 onFulfilledArray 队列里，失败时执行的回调放在 onRejectedArray 队列里。</li> <li>创建 Promise 实例时传入的函数会被赋予函数类型的参数，即 resolve 和 reject，它们接收一个参数，代表异步操作返回的结果，当一步操作执行成功后，用户会调用 resolve 方法。失败时，会执行 reject 方法。这时候其实真正执行的操作是将队列中的回调一一执行。</li></ol> <h3 id="加入延迟绑定机制"><a href="#加入延迟绑定机制" class="header-anchor">#</a> 加入延迟绑定机制</h3> <p>细心的小伙伴可能会发现，上述的代码还存在一些问题：在 then 回调之前， resolve 和 reject 函数就会执行。因此，需要将 resolve 和 reject 的执行，放到任务队列中。这里姑且先放到 setTimeout 里，保证异步执行（这样的做法并不严谨，为了保证 Promise 属于 microtasks，很多 Promise 的实现库用了 MutationObserver 来模仿 nextTick）</p> <div class="language- extra-class"><pre class="language-text"><code> const resolve = value =&gt; {
+    // setTimeout 模拟异步执行
+    setTimeout(() =&gt; { 
+      this.value = value
+      this.onFulfilledArray.forEach(func =&gt; {
+        func(value)
+      })
+    })
+  }
+
+  const reject = reason =&gt; {
+    // setTimeout 模拟异步执行
+    setTimeout(() =&gt; { 
+      this.reason = reason
+      this.onRejectedArray.forEach(func =&gt; {
+        func(reason)
+      })
+    })
+  }
+</code></pre></div><h3 id="加入状态"><a href="#加入状态" class="header-anchor">#</a> 加入状态</h3> <p>Promises/A+ 规范中的 Promise States 中明确规定了，pending 可以转化为 fulfilled 或 rejected 并且只能转化一次，也就是说如果 pending 转化到 fulfilled 状态，那么就不能再转化到 rejected。并且 fulfilled 和 rejected 状态只能由 pending 转化而来，两者之间不能互相转换。一图胜千言：</p> <p><img src="https://user-gold-cdn.xitu.io/2020/6/8/17292885fc45811c?w=353&amp;h=260&amp;f=png&amp;s=4035" alt="">
+改进后的代码：</p> <div class="language- extra-class"><pre class="language-text"><code>function Promise(executor) {
+  this.status = 'pending'
+  this.value = null
+  this.reason = null
+  this.onFulfilledArray = []
+  this.onRejectedArray = []
+
+  const resolve = value =&gt; {
+    // setTimeout 模拟异步执行
+    setTimeout(() =&gt; { 
+      if (this.status === 'pending') {
+        this.value = value
+        this.status = 'fulfilled'
+
+        this.onFulfilledArray.forEach(func =&gt; {
+          func(value)
+        })
+      }
+    })
+  }
+
+  const reject = reason =&gt; {
+    // setTimeout 模拟异步执行
+    setTimeout(() =&gt; { 
+      if (this.status === 'pending') {
+        this.reason = reason
+        this.status = 'rejected'
+        
+        this.onRejectedArray.forEach(func =&gt; {
+          func(reason)
+        })
+      }
+    })
+  }
+  executor(resolve, reject)
+}
+
+Promise.prototype.then = function(onfulfilled, onrejected) {
+  if (this.status === 'fulfilled') {
+    onfulfilled(this.value)
+  }
+  if (this.status === 'rejected') {
+    onrejected(this.reason)
+  }
+  if (this.status === 'pending') {
+    this.onFulfilledArray.push(onfulfilled)
+    this.onRejectedArray.push(onrejected)
+  }
+}
+</code></pre></div><p>上述代码的思路是这样的：resolve 和 reject 执行时，会将状态设置为 fulfilled 和 rejected， 在此之后调用 then 添加的新回调，都会立即执行。</p> <h3 id="链式promise"><a href="#链式promise" class="header-anchor">#</a> 链式Promise</h3> <p>先从下面例题说起：</p> <div class="language- extra-class"><pre class="language-text"><code>const promise = new Promise((resolve, reject) =&gt; {
+  setTimeout(() =&gt; {
+      resolve('lucas')
+  }, 2000)
+})
+
+promise.then(data =&gt; {
+  console.log(data)
+  return new Promise((resolve, reject) =&gt; {
+    setTimeout(() =&gt; {
+        resolve(`${data} next then`)
+    }, 4000)
+  })
+})
+.then(data =&gt; {
+  console.log(data)
+})
+</code></pre></div><p>将在 2 秒后输出：lucas，紧接着再过 4 秒后（第 6 秒）输出：lucas next then。</p> <p>这种场景相信用 过promise 的人都知道会有很多，那么类似这种就是所谓的链式 Promise。</p> <p>一个 Promise 实例的 then 方法体 onfulfilled 函数和 onrejected 函数中，是支持再次返回一个 Promise 实例的，也支持返回一个非 Promise 实例的普通值；并且返回的这个 Promise 实例或者这个非 Promise 实例的普通值将会传给下一个 then 方法 onfulfilled 函数或者 onrejected 函数中，这样就支持链式调用了。</p> <p>对 then 方法进行代码改造后：</p> <details><summary> 点击展开完整代码 </summary> <div class="language- extra-class"><pre><code>// then 方法中 变量 result 既可以是一个普通值，也可以是一个 Promise 实例，为此我们抽象出 resolvePromise 方法进行统一处理 
+
+const resolvePromise = (promise2, result, resolve, reject) =&gt; {
+  // 当 result 和 promise2 相等时，也就是说 onfulfilled 返回 promise2 时，进行 reject
+  if (result === promise2) {
+    return reject(new TypeError('error due to circular reference'))
+  }
+
+  // 是否已经执行过 onfulfilled 或者 onrejected
+  let consumed = false
+  let thenable
+
+  if (result instanceof Promise) {
+    if (result.status === 'pending') {
+      result.then(function(data) {
+        resolvePromise(promise2, data, resolve, reject)
+      }, reject)
+    } else {
+      result.then(resolve, reject)
+    }
+    return
+  }
+
+  let isComplexResult = target =&gt; (typeof target === 'function' || typeof target === 'object') &amp;&amp; (target !== null)
+  // 如果返回的是疑似 Promise 类型
+  if (isComplexResult(result)) {
+    try {
+      thenable = result.then
+      // 如果返回的是 Promise 类型，具有 then 方法
+      if (typeof thenable === 'function') {
+        thenable.call(result, function(data) {
+          if (consumed) {
+            return
+          }
+          consumed = true
+
+          return resolvePromise(promise2, data, resolve, reject)
+        }, function(error) {
+          if (consumed) {
+            return
+          }
+          consumed = true
+
+          return reject(error)
+        })
+      }
+      else {
+        return resolve(result)
+      }
+
+    } catch(e) {
+      if (consumed) {
+        return
+      }
+      consumed = true
+      return reject(e)
+    }
+  }
+  else {
+    return resolve(result)
+  }
+}
+
+Promise.prototype.then = function(onfulfilled, onrejected) {
+  onfulfilled = typeof onfulfilled === 'function' ? onfulfilled : data =&gt; data
+  onrejected = typeof onrejected === 'function' ? onrejected : error =&gt; {throw error}
+
+  // promise2 将作为 then 方法的返回值
+  let promise2
+
+  if (this.status === 'fulfilled') {
+    return promise2 = new Promise((resolve, reject) =&gt; {
+      setTimeout(() =&gt; {
+        try {
+          // 这个新的 promise2 resolved 的值为 onfulfilled 的执行结果
+          let result = onfulfilled(this.value)
+          resolvePromise(promise2, result, resolve, reject)
+        }
+        catch(e) {
+          reject(e)
+        }
+      })
+    })
+  }
+  if (this.status === 'rejected') {
+    return promise2 = new Promise((resolve, reject) =&gt; {
+      setTimeout(() =&gt; {
+        try {
+          // 这个新的 promise2 reject 的值为 onrejected 的执行结果
+         let result = onrejected(this.reason)
+         resolvePromise(promise2, result, resolve, reject)
+        }
+        catch(e) {
+          reject(e)
+        }
+      })
+    })
+  }
+  if (this.status === 'pending') {
+    return promise2 = new Promise((resolve, reject) =&gt; {
+      this.onFulfilledArray.push(value =&gt; {
+        try {
+          let result = onfulfilled(value)
+          resolvePromise(promise2, result, resolve, reject)
+        }
+        catch(e) {
+          return reject(e)
+        }
+      })
+
+      this.onRejectedArray.push(reason =&gt; {
+        try {
+          let result = onrejected(reason)
+          resolvePromise(promise2, result, resolve, reject)
+        }
+        catch(e) {
+          return reject(e)
+        }
+      })      
+    })
+  }
+}
+</code></pre></div></details> <h3 id="promise-值穿透"><a href="#promise-值穿透" class="header-anchor">#</a> Promise 值穿透</h3> <p>看下面例子：</p> <div class="language- extra-class"><pre class="language-text"><code>const promise = new Promise((resolve, reject) =&gt; {
+  setTimeout(() =&gt; {
+      resolve('lucas')
+  }, 2000)
+})
+
+
+promise.then(null)
+.then(data =&gt; {
+  console.log(data)
+})
+</code></pre></div><p>这段代码将会在 2 秒后输出：lucas。这就是 Promise 穿透现象：</p> <p>给 .then() 函数传递非函数值作为其参数时，实际上会被解析成 .then(null)，这时候的表现应该是：上一个 promise 对象的结果进行“穿透”，如果在后面链式调用仍存在第二个 .then() 函数时，将会获取被穿透下来的结果。</p> <p>值穿透代码实现：</p> <div class="language- extra-class"><pre class="language-text"><code>Promise.prototype.then = function(onfulfilled = Function.prototype, onrejected = Function.prototype) {
+  // 如果 then 方法接收的不是函数，则默认赋予直接返回其值函数，从而实现穿透
+  onfulfilled = typeof onfulfilled === 'function' ? onfulfilled : data =&gt; data
+  onrejected = typeof onrejected === 'function' ? onrejected : error =&gt; { throw error }
+
+    // ...
+}
+</code></pre></div><h3 id="异常处理"><a href="#异常处理" class="header-anchor">#</a> 异常处理</h3> <p>Promise.prototype.catch 可以进行异常捕获，它的典型用法：</p> <div class="language- extra-class"><pre class="language-text"><code>const promise1 = new Promise((resolve, reject) =&gt; {
+  setTimeout(() =&gt; {
+      reject('lucas error')
+  }, 2000)
+})
+
+promise1.then(data =&gt; {
+  console.log(data)
+}).catch(error =&gt; {
+  console.log(error)
+})
+</code></pre></div><p>会在 2 秒后输出：lucas error。</p> <p>其实在这种场景下，它就相当于：</p> <div class="language- extra-class"><pre class="language-text"><code>Promise.prototype.catch = function(catchFunc) {
+  return this.then(null, catchFunc)
+}
+</code></pre></div><p>因为我们知道 .then() 方法的第二个参数也是进行异常捕获的，通过这个特性，我们比较简单地实现了 Promise.prototype.catch。</p> <h3 id="promise-prototype-resolve-实现"><a href="#promise-prototype-resolve-实现" class="header-anchor">#</a> Promise.prototype.resolve 实现</h3> <p>请看实例：</p> <div class="language- extra-class"><pre class="language-text"><code>Promise.resolve('data').then(data =&gt; {
+  console.log(data)
+})
+console.log(1)
+</code></pre></div><p>先输出 1 再输出 data。</p> <p>那么实现 Promise.resolve(value) 也很简单：</p> <div class="language- extra-class"><pre class="language-text"><code>Promise.resolve = function(value) {
+  return new Promise((resolve, reject) =&gt; {
+    resolve(value)
+  })
+}
+</code></pre></div><p>顺带实现一个 <strong>Promise.reject(value)</strong>：</p> <div class="language- extra-class"><pre class="language-text"><code>Promise.reject = function(value) {
+  return new Promise((resolve, reject) =&gt; {
+    reject(value)
+  })
+}
+</code></pre></div><h2 id="总结"><a href="#总结" class="header-anchor">#</a> 总结</h2> <p>最后把完整代码贴出：</p> <details><summary> 点击展开完整代码 </summary> <div class="language- extra-class"><pre><code>function Promise(executor) {
+  this.status = 'pending'
+  this.value = null
+  this.reason = null
+  this.onFulfilledArray = []
+  this.onRejectedArray = []
+
+  const resolve = value =&gt; {
+    if (value instanceof Promise) {
+      return value.then(resolve, reject)
+    }
+    setTimeout(() =&gt; {
+      if (this.status === 'pending') {
+        this.value = value
+        this.status = 'fulfilled'
+
+        this.onFulfilledArray.forEach(func =&gt; {
+          func(value)
+        })
+      }
+    })
+  }
+
+  const reject = reason =&gt; {
+    setTimeout(() =&gt; {
+      if (this.status === 'pending') {
+        this.reason = reason
+        this.status = 'rejected'
+
+        this.onRejectedArray.forEach(func =&gt; {
+          func(reason)
+        })
+      }
+    })
+  }
+
+
+    try {
+        executor(resolve, reject)
+    } catch(e) {
+        reject(e)
+    }
+}
+
+const resolvePromise = (promise2, result, resolve, reject) =&gt; {
+  // 当 result 和 promise2 相等时，也就是说 onfulfilled 返回 promise2 时，进行 reject
+  if (result === promise2) {
+    return reject(new TypeError('error due to circular reference'))
+  }
+
+  // 是否已经执行过 onfulfilled 或者 onrejected
+  let consumed = false
+  let thenable
+
+  if (result instanceof Promise) {
+    if (result.status === 'pending') {
+      result.then(function(data) {
+        resolvePromise(promise2, data, resolve, reject)
+      }, reject)
+    } else {
+      result.then(resolve, reject)
+    }
+    return
+  }
+
+  let isComplexResult = target =&gt; (typeof target === 'function' || typeof target === 'object') &amp;&amp; (target !== null)
+  // 如果返回的是疑似 Promise 类型
+  if (isComplexResult(result)) {
+    try {
+      thenable = result.then
+      // 如果返回的是 Promise 类型，具有 then 方法
+      if (typeof thenable === 'function') {
+        thenable.call(result, function(data) {
+          if (consumed) {
+            return
+          }
+          consumed = true
+
+          return resolvePromise(promise2, data, resolve, reject)
+        }, function(error) {
+          if (consumed) {
+            return
+          }
+          consumed = true
+
+          return reject(error)
+        })
+      }
+      else {
+        return resolve(result)
+      }
+
+    } catch(e) {
+      if (consumed) {
+        return
+      }
+      consumed = true
+      return reject(e)
+    }
+  }
+  else {
+    return resolve(result)
+  }
+}
+
+Promise.prototype.then = function(onfulfilled, onrejected) {
+  onfulfilled = typeof onfulfilled === 'function' ? onfulfilled : data =&gt; data
+  onrejected = typeof onrejected === 'function' ? onrejected : error =&gt; {throw error}
+
+  // promise2 将作为 then 方法的返回值
+  let promise2
+
+  if (this.status === 'fulfilled') {
+    return promise2 = new Promise((resolve, reject) =&gt; {
+      setTimeout(() =&gt; {
+        try {
+          // 这个新的 promise2 resolved 的值为 onfulfilled 的执行结果
+          let result = onfulfilled(this.value)
+          resolvePromise(promise2, result, resolve, reject)
+        }
+        catch(e) {
+          reject(e)
+        }
+      })
+    })
+  }
+  if (this.status === 'rejected') {
+    return promise2 = new Promise((resolve, reject) =&gt; {
+      setTimeout(() =&gt; {
+        try {
+          // 这个新的 promise2 reject 的值为 onrejected 的执行结果
+         let result = onrejected(this.reason)
+         resolvePromise(promise2, result, resolve, reject)
+        }
+        catch(e) {
+          reject(e)
+        }
+      })
+    })
+  }
+  if (this.status === 'pending') {
+    return promise2 = new Promise((resolve, reject) =&gt; {
+      this.onFulfilledArray.push(value =&gt; {
+        try {
+          let result = onfulfilled(value)
+          resolvePromise(promise2, result, resolve, reject)
+        }
+        catch(e) {
+          return reject(e)
+        }
+      })
+
+      this.onRejectedArray.push(reason =&gt; {
+        try {
+          let result = onrejected(reason)
+          resolvePromise(promise2, result, resolve, reject)
+        }
+        catch(e) {
+          return reject(e)
+        }
+      })      
+    })
+  }
+}
+
+Promise.prototype.catch = function(catchFunc) {
+  return this.then(null, catchFunc)
+}
+
+Promise.resolve = function(value) {
+  return new Promise((resolve, reject) =&gt; {
+    resolve(value)
+  })
+}
+
+Promise.reject = function(value) {
+  return new Promise((resolve, reject) =&gt; {
+    reject(value)
+  })
+}
+</code></pre></div></details> <h2 id="参考文献"><a href="#参考文献" class="header-anchor">#</a> 参考文献</h2> <ul><li>[x] <a href="https://mengera88.github.io/2017/05/18/Promise%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/" target="_blank" rel="noopener noreferrer">30分钟，让你彻底明白Promise原理<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></li> <li>[x] <a href="https://time.geekbang.org/column/article/136895" target="_blank" rel="noopener noreferrer">浏览器工作原理与实践<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></li> <li>[x] <a href="https://gitbook.cn/gitchat/column/5c91c813968b1d64b1e08fde/topic/5cbbe946bbbba80861a35bfc" target="_blank" rel="noopener noreferrer">前端开发核心知识进阶<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></li></ul></div></article> <div class="main-div vssue"><!----></div></div></main> <aside class="aside" data-v-b3fda33c data-v-b3fda33c><div class="info-card main-div" data-v-1311ce9e data-v-b3fda33c><div class="info-card-header" style="background-size:cover;background-repeat:no-repeat;background-position:center;background-attachment:scroll;background-image:url(/avatar-bg.jpeg);" data-v-1311ce9e><img src="/avatar-top.jpeg" alt="melodydl" class="info-avatar" data-v-1311ce9e></div> <div class="info-card-body" data-v-1311ce9e><section class="info-name" data-v-1311ce9e>
+      melodydl
+    </section> <section class="info-desc" data-v-1311ce9e>In me the tiger sniffs the rose<br/>心有猛虎，细嗅蔷薇</section> <section class="info-contact" data-v-1311ce9e><section data-v-1311ce9e><span data-v-1311ce9e data-v-1311ce9e><svg class="icon" style="font-size:1em;" data-v-1311ce9e data-v-1311ce9e><use xlink:href="#icon-location" data-v-1311ce9e data-v-1311ce9e></use></svg><span class="info-text" data-v-1311ce9e data-v-1311ce9e>
+          Shanghai, China
+        </span></span></section> <!----> <section data-v-1311ce9e><span data-v-1311ce9e data-v-1311ce9e><svg class="icon" style="font-size:1em;" data-v-1311ce9e data-v-1311ce9e><use xlink:href="#icon-email" data-v-1311ce9e data-v-1311ce9e></use></svg><span class="info-text" data-v-1311ce9e data-v-1311ce9e>
+          facecode@foxmail.com
+        </span></span></section></section></div> <div class="info-card-footer" data-v-1311ce9e><p class="footer-sns-link" data-v-1311ce9e><a target="_blank" href="https://blog.csdn.net/weixin_44002432" class="sns-link" data-v-1311ce9e><span class="sns-icon" data-v-1311ce9e data-v-1311ce9e><svg class="icon" style="font-size:35px;" data-v-1311ce9e data-v-1311ce9e><use xlink:href="#icon-csdn" data-v-1311ce9e data-v-1311ce9e></use></svg></span></a><a target="_blank" href="https://weibo.com/u/5656925978" class="sns-link" data-v-1311ce9e><span class="sns-icon" data-v-1311ce9e data-v-1311ce9e><svg class="icon" style="font-size:35px;" data-v-1311ce9e data-v-1311ce9e><use xlink:href="#icon-weibo" data-v-1311ce9e data-v-1311ce9e></use></svg></span></a><a target="_blank" href="https://juejin.im/user/5ce784a0f265da1b8333673c" class="sns-link" data-v-1311ce9e><span class="sns-icon" data-v-1311ce9e data-v-1311ce9e><svg class="icon" style="font-size:35px;" data-v-1311ce9e data-v-1311ce9e><use xlink:href="#icon-juejin" data-v-1311ce9e data-v-1311ce9e></use></svg></span></a><a target="_blank" href="https://www.zhihu.com/people/sheng-tang-de-xing-kong" class="sns-link" data-v-1311ce9e><span class="sns-icon" data-v-1311ce9e data-v-1311ce9e><svg class="icon" style="font-size:35px;" data-v-1311ce9e data-v-1311ce9e><use xlink:href="#icon-zhihu" data-v-1311ce9e data-v-1311ce9e></use></svg></span></a><a target="_blank" href="https://github.com/youdeliang" class="sns-link" data-v-1311ce9e><span class="sns-icon" data-v-1311ce9e data-v-1311ce9e><svg class="icon" style="font-size:35px;" data-v-1311ce9e data-v-1311ce9e><use xlink:href="#icon-github" data-v-1311ce9e data-v-1311ce9e></use></svg></span></a></p></div></div> <div class="post-toc main-div aside-toc" style="position:relative;top:0;width:0px;" data-v-b3fda33c><h4>- CATALOG</h4> <div class="post-nav-toc"><ul><li><a href="/posts/2020/06/27/%E6%B7%B1%E5%85%A5-js-%E4%B9%8B-promise.html#基本概念">基本概念</a></li><li><a href="/posts/2020/06/27/%E6%B7%B1%E5%85%A5-js-%E4%B9%8B-promise.html#原理剖析">原理剖析</a><ul><li><a href="/posts/2020/06/27/%E6%B7%B1%E5%85%A5-js-%E4%B9%8B-promise.html#极简promise雏形">极简Promise雏形</a></li><li><a href="/posts/2020/06/27/%E6%B7%B1%E5%85%A5-js-%E4%B9%8B-promise.html#加入延迟绑定机制">加入延迟绑定机制</a></li><li><a href="/posts/2020/06/27/%E6%B7%B1%E5%85%A5-js-%E4%B9%8B-promise.html#加入状态">加入状态</a></li><li><a href="/posts/2020/06/27/%E6%B7%B1%E5%85%A5-js-%E4%B9%8B-promise.html#链式promise">链式Promise</a></li><li><a href="/posts/2020/06/27/%E6%B7%B1%E5%85%A5-js-%E4%B9%8B-promise.html#promise-值穿透">Promise 值穿透</a></li><li><a href="/posts/2020/06/27/%E6%B7%B1%E5%85%A5-js-%E4%B9%8B-promise.html#异常处理">异常处理</a></li><li><a href="/posts/2020/06/27/%E6%B7%B1%E5%85%A5-js-%E4%B9%8B-promise.html#promise-prototype-resolve-实现">Promise.prototype.resolve 实现</a></li></ul></li><li><a href="/posts/2020/06/27/%E6%B7%B1%E5%85%A5-js-%E4%B9%8B-promise.html#总结">总结</a></li><li><a href="/posts/2020/06/27/%E6%B7%B1%E5%85%A5-js-%E4%B9%8B-promise.html#参考文献">参考文献</a></li></ul></div></div></aside></div> <footer class="footer" data-v-7f2e4136><p class="footer-sns-link"><a target="_blank" href="https://blog.csdn.net/weixin_44002432" class="sns-link"><span class="sns-icon"><svg class="icon" style="font-size:40px;"><use xlink:href="#icon-csdn"></use></svg></span></a><a target="_blank" href="https://weibo.com/u/5656925978" class="sns-link"><span class="sns-icon"><svg class="icon" style="font-size:40px;"><use xlink:href="#icon-weibo"></use></svg></span></a><a target="_blank" href="https://juejin.im/user/5ce784a0f265da1b8333673c" class="sns-link"><span class="sns-icon"><svg class="icon" style="font-size:40px;"><use xlink:href="#icon-juejin"></use></svg></span></a><a target="_blank" href="https://www.zhihu.com/people/sheng-tang-de-xing-kong" class="sns-link"><span class="sns-icon"><svg class="icon" style="font-size:40px;"><use xlink:href="#icon-zhihu"></use></svg></span></a><a target="_blank" href="https://github.com/youdeliang" class="sns-link"><span class="sns-icon"><svg class="icon" style="font-size:40px;"><use xlink:href="#icon-github"></use></svg></span></a></p> <div class="copyright"><span id="custom">Copyright &copy; Top Blog 2020 <br /> 
+        Theme By <a href="https://www.vuepress.cn/" target="_blank">VuePress</a>
+        | <a href="https://www.github.com/youdeliang/" target="_blank">youdeliang</a></span> <iframe src="https://ghbtns.com/github-btn.html?user=youdeliang&amp;repo=vuepress-theme-melodydl&amp;type=star&amp;count=true" frameborder="0" scrolling="0" width="80px" height="20px" class="footer-btn" style="margin-left: 2px; margin-bottom:-5px;"></iframe></div></footer></div><div class="global-ui"><!----><!----></div></div>
+    <script src="/assets/js/app.c74921c7.js" defer></script><script src="/assets/js/6.8a44c677.js" defer></script><script src="/assets/js/13.6773e801.js" defer></script>
+  </body>
+</html>

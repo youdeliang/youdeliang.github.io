@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>深入JS之this | Top 的博客 ｜ Top Blog</title>
+    <meta name="generator" content="VuePress 1.4.1">
+    <link rel="icon" href="/favicon.ico">
+    <meta name="description" content="个人博客">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+    <link rel="preload" href="/assets/css/0.styles.62d8fb78.css" as="style"><link rel="preload" href="/assets/js/app.c74921c7.js" as="script"><link rel="preload" href="/assets/js/6.8a44c677.js" as="script"><link rel="preload" href="/assets/js/11.220c158d.js" as="script"><link rel="prefetch" href="/assets/js/10.5e2da4d1.js"><link rel="prefetch" href="/assets/js/12.b1e6b80c.js"><link rel="prefetch" href="/assets/js/13.6773e801.js"><link rel="prefetch" href="/assets/js/14.ac840d4b.js"><link rel="prefetch" href="/assets/js/15.58f52d14.js"><link rel="prefetch" href="/assets/js/16.976d494d.js"><link rel="prefetch" href="/assets/js/17.d47fb699.js"><link rel="prefetch" href="/assets/js/18.74c455b7.js"><link rel="prefetch" href="/assets/js/2.26db6680.js"><link rel="prefetch" href="/assets/js/3.e6f78273.js"><link rel="prefetch" href="/assets/js/4.9339957e.js"><link rel="prefetch" href="/assets/js/5.9dcceca0.js"><link rel="prefetch" href="/assets/js/7.e68f402f.js"><link rel="prefetch" href="/assets/js/8.bf682037.js"><link rel="prefetch" href="/assets/js/9.9ac068c9.js">
+    <link rel="stylesheet" href="/assets/css/0.styles.62d8fb78.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div id="global-layout" data-v-7f2e4136><header class="header-container" style="background-size:cover;background-repeat:no-repeat;background-position:center;background-attachment:scroll;background-image:url(/post-bg.jpeg);" data-v-93921ff8 data-v-7f2e4136><nav class="navbar" style="position:absolute;opacity:1;transition:all 0.5s ease-in-out;" data-v-93921ff8><a href="/" class="navbar-link router-link-active">
+    Top Blog
+  </a> <ul class="navbar-links"><li><a href="/" class="router-link-active">
+        HOME
+      </a></li><li><a href="/about/">
+        ABOUT
+      </a></li><li><a href="/tags/">
+        TAGS
+      </a></li></ul> <div id="nav-icon"><span></span><span></span><span></span></div></nav> <div class="header-title" data-v-93921ff8 data-v-93921ff8><h1 data-v-93921ff8>深入JS之this</h1> <p data-v-93921ff8></p></div></header> <div class="container" data-v-b3fda33c data-v-7f2e4136><main class="main" style="width:60%;" data-v-b3fda33c><div class="post" data-v-b3fda33c data-v-b3fda33c><article class="main-div"><div class="post-content content content__default"><p>本篇博客主要是对 Javcscript this 学习理解
+</p> <h2 id="前言"><a href="#前言" class="header-anchor">#</a> 前言</h2> <p>我们先从一个例题开始：</p> <div class="language- extra-class"><pre class="language-text"><code>let foo = '哇'
+let obj = {
+  foo: '蛙哇'，
+  fn: function() {
+    console.log(foo)
+  }
+}
+obj.fn()
+</code></pre></div><p>最后返回的是外部的 <code>哇</code> 属性变量， 而不是对象内部的变量。我们知道在对象内部方法中使用对象内部属性是一种常见的需求。但 JavaScript 的作用域不支持这一点，基于这个需求，JavaScript 又搞出另一套 <code>this</code> 机制。</p> <p>所以，在 JavaScript 中通过 <code>this</code> 就可以访问对象里面的属性，调整上面的代码：</p> <div class="language- extra-class"><pre class="language-text"><code>fn: function() {
+  console.log(this.foo)
+}
+</code></pre></div><p>最终返回的是对象的内部属性。</p> <p>开始之前，需要我了解的是 JavaScript 中的作用域链和 <code>this</code> 是两套不一样的系统，他们之间没有太多的联系。</p> <h2 id="javascript中this是什么"><a href="#javascript中this是什么" class="header-anchor">#</a> JavaScript中this是什么</h2> <p>关于 <code>this</code>，还得从执行上下文说起，执行上下文中除了包含变量环境、词法环境、外部环境，还包含了 <code>this</code>，一图胜前言，具体可参考下图：</p> <p><img src="https://user-gold-cdn.xitu.io/2020/6/9/17297fddf5788ac9?w=327&amp;h=244&amp;f=png&amp;s=8034" alt="执行上下文中的this">
+从图中可以看出，<strong>this 是和执行上下文绑定的</strong>，也就是说每个执行上下文中都有一个 this。而执行上下文主要分为三种-全局执行上下文、函数执行上下文 和 eval 执行上下文。所以对应的 this 也分为三种-全局执行上下文中的 this、函数执行上下文中的 this 和 eval 执行上下文中的 this。</p> <p>由于 eval 使用的不多，所以这里只讨论全局和函数执行上下文中的 this。</p> <h2 id="全局执行上下文中的-this"><a href="#全局执行上下文中的-this" class="header-anchor">#</a> 全局执行上下文中的 this</h2> <div class="language- extra-class"><pre class="language-text"><code>console.log(this) // window
+</code></pre></div><p>你可以在控制台打印 this， 最终输出的是 window 对象。所以你可以得出这样一个结论：全局执行上下文中的 this 是指向 window 对象的。这也是 this 和作用域链的唯一交点，作用域链的最底端包含了 window 对象，全局执行上下文中的 this 也是指向 window 对象。</p> <h2 id="函数执行上下文中的-this"><a href="#函数执行上下文中的-this" class="header-anchor">#</a> 函数执行上下文中的 this</h2> <p>现在我们知道了全局对象中 this 的指向 window 对象，那么接下来，重点分析函数执行上下文的 this，还是先看下面这段代码：</p> <div class="language- extra-class"><pre class="language-text"><code>function foo(){
+  console.log(this)
+}
+function bar(){
+  'use strict'
+  console.log(this)
+}
+
+foo() // window
+bar() // undefined
+</code></pre></div><p>执行上面这段代码，打印出来也是 window 对象，这说明在非严格模式的默认情况下调用函数，其执行上下文中的 this 也是指向 window 对象的。严格模式下，this 为 undefined 。估计你会好奇，那能不能设置执行上下文中的 this 来指向其他对象呢？答案是肯定的。通常情况下，有下面三种方式来设置函数执行上下文中的 this 值。</p> <h3 id="_1-通过函数的call方法设置"><a href="#_1-通过函数的call方法设置" class="header-anchor">#</a> 1.通过函数的call方法设置</h3> <p>你可以通过函数的 call 方法来设置函数执行上下文的 this 指向，比如下面这段代码，我们就并没有直接调用 foo 函数，而是调用了 foo 的 call 方法，并将 bar 对象作为 call 方法的参数。</p> <div class="language- extra-class"><pre class="language-text"><code>
+let bar = {
+  myName : &quot;哇&quot;,
+  test1 : 1
+}
+function foo(){
+  this.myName = &quot;蛙哇&quot;
+}
+foo.call(bar)
+console.log(bar)
+console.log(myName)
+</code></pre></div><p>执行这段代码，然后观察输出结果，你就能发现 foo 函数内部的 this 已经指向了 bar 对象。其实除了 call 方法，你还可以使用 bind 和 apply 方法来设置函数执行上下文中的 this。</p> <h3 id="_2-通过对象调用方法设置"><a href="#_2-通过对象调用方法设置" class="header-anchor">#</a> 2. 通过对象调用方法设置</h3> <p>要改变函数执行上下文中的 this 指向，除了通过函数的 call 方法来实现外，还可以通过对象调用的方式，比如下面这段代码：</p> <div class="language- extra-class"><pre class="language-text"><code>
+var myObj = {
+  name : &quot;蛙哇&quot;, 
+  showThis: function(){
+    console.log(this)
+  }
+}
+myObj.showThis()
+</code></pre></div><p>执行这段代码，你可以看到，最终输出的 this 值是指向 myObj 的。</p> <p>所以，你可以得出这样的结论：<strong>使用对象来调用其内部的一个方法，该方法的 this 是指向对象本身的</strong>。</p> <p>其实，你也可以认为 JavaScript 引擎在执行<code>myObject.showThis()</code>时，将其转化为了：</p> <div class="language- extra-class"><pre class="language-text"><code>myObj.showThis.call(myObj)
+</code></pre></div><p>接下来我们稍微改变下调用方式，把 showThis 赋给一个全局对象，然后再调用该对象，代码如下所示：</p> <div class="language- extra-class"><pre class="language-text"><code>
+var myObj = {
+  name : &quot;哇&quot;,
+  showThis: function(){
+    this.name = &quot;蛙哇&quot;
+    console.log(this)
+  }
+}
+var foo = myObj.showThis
+foo()
+</code></pre></div><p>执行这段代码，你会发现 this 又指向了全局 window 对象。</p> <p>所以通过以上两个例子的对比，你可以得出下面这样两个结论：</p> <ul><li><strong>在全局环境中调用一个函数，函数内部的 this 指向的是全局变量 window</strong>。</li> <li><strong>通过一个对象来调用其内部的一个方法，该方法的执行上下文中的 this 指向对象本身</strong>。</li></ul> <h3 id="_3-通过构造函数中设置"><a href="#_3-通过构造函数中设置" class="header-anchor">#</a> 3. 通过构造函数中设置</h3> <div class="language- extra-class"><pre class="language-text"><code>function CreateObj(){
+  this.name = &quot;蛙哇&quot;
+}
+var myObj = new CreateObj()
+</code></pre></div><p>在这段代码中，我们使用 new 创建了对象 myObj，那你知道此时的构造函数 CreateObj 中的 this 到底指向了谁吗？其实，当执行 new CreateObj() 的时候，JavaScript 引擎做了如下四件事：</p> <ul><li>首先创建了一个空对象 tempObj；</li> <li>接着调用 CreateObj.call 方法，并将 tempObj 作为 call 方法的参数，这样当 CreateObj 的执行上下文创建时，它的 this 就指向了 tempObj 对象；</li> <li>然后执行 CreateObj 函数，此时的 CreateObj 函数执行上下文中的 this 指向了 tempObj 对象；</li> <li>最后返回 tempObj 对象。</li></ul> <p>为了直观理解，我们可以用代码来演示下：</p> <div class="language- extra-class"><pre class="language-text"><code>  var tempObj = {}
+  CreateObj.call(tempObj)
+  return tempObj
+</code></pre></div><h2 id="this-缺陷和解决方案"><a href="#this-缺陷和解决方案" class="header-anchor">#</a> this 缺陷和解决方案</h2> <h3 id="_1-嵌套函数中的-this-不会从外层函数中继承"><a href="#_1-嵌套函数中的-this-不会从外层函数中继承" class="header-anchor">#</a> 1. 嵌套函数中的 this 不会从外层函数中继承</h3> <div class="language- extra-class"><pre class="language-text"><code>var myObj = {
+  name : &quot;蛙哇&quot;, 
+  showThis: function(){
+    console.log(this)
+    function bar(){console.log(this)}
+    bar()
+  }
+}
+myObj.showThis()
+</code></pre></div><p>执行这段代码后，你会发现函数 bar 中的 this 指向的是全局 window 对象，而函数 showThis 中的 this 指向的是 myObj 对象。这就是 JavaScript 中非常容易让人迷惑的地方之一，也是很多问题的源头。</p> <p><strong>你可以通过一个小技巧来解决这个问题</strong>，比如在 showThis 函数中声明一个变量 self 用来保存 this，然后在 bar 函数中使用 self，代码如下所示：</p> <div class="language- extra-class"><pre class="language-text"><code>
+var myObj = {
+  name : &quot;蛙哇&quot;, 
+  showThis: function(){
+    console.log(this)
+    var self = this
+    function bar(){
+      self.name = &quot;哇&quot;
+    }
+    bar()
+  }
+}
+myObj.showThis()
+console.log(myObj.name)
+console.log(window.name)
+</code></pre></div><p>执行这段代码，你可以看到它输出了我们想要的结果，最终 myObj 中的 name 属性值变成了“哇”。其实，这个方法的的本质是把 this 体系转换为了作用域的体系。</p> <p>其实，<strong>你也可以使用 ES6 中的箭头函数来解决这个问题</strong>，结合下面代码：</p> <div class="language- extra-class"><pre class="language-text"><code>
+var myObj = {
+  name : &quot;蛙哇&quot;, 
+  showThis: function(){
+    console.log(this)
+    var bar = ()=&gt;{
+      this.name = &quot;哇&quot;
+      console.log(this)
+    }
+    bar()
+  }
+}
+myObj.showThis()
+console.log(myObj.name)
+console.log(window.name)
+</code></pre></div><p>执行这段代码，你会发现它也输出了我们想要的结果，也就是箭头函数 bar 里面的 this 是指向 myObj 对象的。这是因为 ES6 中的箭头函数并不会创建其自身的执行上下文，所以箭头函数中的 this 取决于它的外部函数。</p> <p>通过上面的讲解，你现在应该知道了 this 没有作用域的限制，这点和变量不一样，所以嵌套函数不会从调用它的函数中继承 this，这样会造成很多不符合直觉的代码。要解决这个问题，你可以有两种思路：</p> <ul><li>第一种是把 this 保存为一个 self 变量，再利用变量的作用域机制传递给嵌套函数。</li> <li>第二种是继续使用 this，但是要把嵌套函数改为箭头函数，因为箭头函数没有自己的执行上下文，所以它会继承调用函数中的 this。</li></ul></div></article> <div class="main-div vssue"><!----></div></div></main> <aside class="aside" data-v-b3fda33c data-v-b3fda33c><div class="info-card main-div" data-v-1311ce9e data-v-b3fda33c><div class="info-card-header" style="background-size:cover;background-repeat:no-repeat;background-position:center;background-attachment:scroll;background-image:url(/avatar-bg.jpeg);" data-v-1311ce9e><img src="/avatar-top.jpeg" alt="melodydl" class="info-avatar" data-v-1311ce9e></div> <div class="info-card-body" data-v-1311ce9e><section class="info-name" data-v-1311ce9e>
+      melodydl
+    </section> <section class="info-desc" data-v-1311ce9e>In me the tiger sniffs the rose<br/>心有猛虎，细嗅蔷薇</section> <section class="info-contact" data-v-1311ce9e><section data-v-1311ce9e><span data-v-1311ce9e data-v-1311ce9e><svg class="icon" style="font-size:1em;" data-v-1311ce9e data-v-1311ce9e><use xlink:href="#icon-location" data-v-1311ce9e data-v-1311ce9e></use></svg><span class="info-text" data-v-1311ce9e data-v-1311ce9e>
+          Shanghai, China
+        </span></span></section> <!----> <section data-v-1311ce9e><span data-v-1311ce9e data-v-1311ce9e><svg class="icon" style="font-size:1em;" data-v-1311ce9e data-v-1311ce9e><use xlink:href="#icon-email" data-v-1311ce9e data-v-1311ce9e></use></svg><span class="info-text" data-v-1311ce9e data-v-1311ce9e>
+          facecode@foxmail.com
+        </span></span></section></section></div> <div class="info-card-footer" data-v-1311ce9e><p class="footer-sns-link" data-v-1311ce9e><a target="_blank" href="https://blog.csdn.net/weixin_44002432" class="sns-link" data-v-1311ce9e><span class="sns-icon" data-v-1311ce9e data-v-1311ce9e><svg class="icon" style="font-size:35px;" data-v-1311ce9e data-v-1311ce9e><use xlink:href="#icon-csdn" data-v-1311ce9e data-v-1311ce9e></use></svg></span></a><a target="_blank" href="https://weibo.com/u/5656925978" class="sns-link" data-v-1311ce9e><span class="sns-icon" data-v-1311ce9e data-v-1311ce9e><svg class="icon" style="font-size:35px;" data-v-1311ce9e data-v-1311ce9e><use xlink:href="#icon-weibo" data-v-1311ce9e data-v-1311ce9e></use></svg></span></a><a target="_blank" href="https://juejin.im/user/5ce784a0f265da1b8333673c" class="sns-link" data-v-1311ce9e><span class="sns-icon" data-v-1311ce9e data-v-1311ce9e><svg class="icon" style="font-size:35px;" data-v-1311ce9e data-v-1311ce9e><use xlink:href="#icon-juejin" data-v-1311ce9e data-v-1311ce9e></use></svg></span></a><a target="_blank" href="https://www.zhihu.com/people/sheng-tang-de-xing-kong" class="sns-link" data-v-1311ce9e><span class="sns-icon" data-v-1311ce9e data-v-1311ce9e><svg class="icon" style="font-size:35px;" data-v-1311ce9e data-v-1311ce9e><use xlink:href="#icon-zhihu" data-v-1311ce9e data-v-1311ce9e></use></svg></span></a><a target="_blank" href="https://github.com/youdeliang" class="sns-link" data-v-1311ce9e><span class="sns-icon" data-v-1311ce9e data-v-1311ce9e><svg class="icon" style="font-size:35px;" data-v-1311ce9e data-v-1311ce9e><use xlink:href="#icon-github" data-v-1311ce9e data-v-1311ce9e></use></svg></span></a></p></div></div> <div class="post-toc main-div aside-toc" style="position:relative;top:0;width:0px;" data-v-b3fda33c><h4>- CATALOG</h4> <div class="post-nav-toc"><ul><li><a href="/posts/2020/06/09/%E6%B7%B1%E5%85%A5js%E4%B9%8B%E6%88%91%E6%98%AF%E5%A6%82%E4%BD%95%E6%90%9E%E6%87%82this.html#前言">前言</a></li><li><a href="/posts/2020/06/09/%E6%B7%B1%E5%85%A5js%E4%B9%8B%E6%88%91%E6%98%AF%E5%A6%82%E4%BD%95%E6%90%9E%E6%87%82this.html#javascript中this是什么">JavaScript中this是什么</a></li><li><a href="/posts/2020/06/09/%E6%B7%B1%E5%85%A5js%E4%B9%8B%E6%88%91%E6%98%AF%E5%A6%82%E4%BD%95%E6%90%9E%E6%87%82this.html#全局执行上下文中的-this">全局执行上下文中的 this</a></li><li><a href="/posts/2020/06/09/%E6%B7%B1%E5%85%A5js%E4%B9%8B%E6%88%91%E6%98%AF%E5%A6%82%E4%BD%95%E6%90%9E%E6%87%82this.html#函数执行上下文中的-this">函数执行上下文中的 this</a><ul><li><a href="/posts/2020/06/09/%E6%B7%B1%E5%85%A5js%E4%B9%8B%E6%88%91%E6%98%AF%E5%A6%82%E4%BD%95%E6%90%9E%E6%87%82this.html#_1-通过函数的call方法设置">1.通过函数的call方法设置</a></li><li><a href="/posts/2020/06/09/%E6%B7%B1%E5%85%A5js%E4%B9%8B%E6%88%91%E6%98%AF%E5%A6%82%E4%BD%95%E6%90%9E%E6%87%82this.html#_2-通过对象调用方法设置">2. 通过对象调用方法设置</a></li><li><a href="/posts/2020/06/09/%E6%B7%B1%E5%85%A5js%E4%B9%8B%E6%88%91%E6%98%AF%E5%A6%82%E4%BD%95%E6%90%9E%E6%87%82this.html#_3-通过构造函数中设置">3. 通过构造函数中设置</a></li></ul></li><li><a href="/posts/2020/06/09/%E6%B7%B1%E5%85%A5js%E4%B9%8B%E6%88%91%E6%98%AF%E5%A6%82%E4%BD%95%E6%90%9E%E6%87%82this.html#this-缺陷和解决方案">this 缺陷和解决方案</a><ul><li><a href="/posts/2020/06/09/%E6%B7%B1%E5%85%A5js%E4%B9%8B%E6%88%91%E6%98%AF%E5%A6%82%E4%BD%95%E6%90%9E%E6%87%82this.html#_1-嵌套函数中的-this-不会从外层函数中继承">1. 嵌套函数中的 this 不会从外层函数中继承</a></li></ul></li></ul></div></div></aside></div> <footer class="footer" data-v-7f2e4136><p class="footer-sns-link"><a target="_blank" href="https://blog.csdn.net/weixin_44002432" class="sns-link"><span class="sns-icon"><svg class="icon" style="font-size:40px;"><use xlink:href="#icon-csdn"></use></svg></span></a><a target="_blank" href="https://weibo.com/u/5656925978" class="sns-link"><span class="sns-icon"><svg class="icon" style="font-size:40px;"><use xlink:href="#icon-weibo"></use></svg></span></a><a target="_blank" href="https://juejin.im/user/5ce784a0f265da1b8333673c" class="sns-link"><span class="sns-icon"><svg class="icon" style="font-size:40px;"><use xlink:href="#icon-juejin"></use></svg></span></a><a target="_blank" href="https://www.zhihu.com/people/sheng-tang-de-xing-kong" class="sns-link"><span class="sns-icon"><svg class="icon" style="font-size:40px;"><use xlink:href="#icon-zhihu"></use></svg></span></a><a target="_blank" href="https://github.com/youdeliang" class="sns-link"><span class="sns-icon"><svg class="icon" style="font-size:40px;"><use xlink:href="#icon-github"></use></svg></span></a></p> <div class="copyright"><span id="custom">Copyright &copy; Top Blog 2020 <br /> 
+        Theme By <a href="https://www.vuepress.cn/" target="_blank">VuePress</a>
+        | <a href="https://www.github.com/youdeliang/" target="_blank">youdeliang</a></span> <iframe src="https://ghbtns.com/github-btn.html?user=youdeliang&amp;repo=vuepress-theme-melodydl&amp;type=star&amp;count=true" frameborder="0" scrolling="0" width="80px" height="20px" class="footer-btn" style="margin-left: 2px; margin-bottom:-5px;"></iframe></div></footer></div><div class="global-ui"><!----><!----></div></div>
+    <script src="/assets/js/app.c74921c7.js" defer></script><script src="/assets/js/6.8a44c677.js" defer></script><script src="/assets/js/11.220c158d.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>深入 JS 之原型和原型链 | Top 的博客 ｜ Top Blog</title>
+    <meta name="generator" content="VuePress 1.4.1">
+    <link rel="icon" href="/favicon.ico">
+    <meta name="description" content="个人博客">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+    <link rel="preload" href="/assets/css/0.styles.62d8fb78.css" as="style"><link rel="preload" href="/assets/js/app.c74921c7.js" as="script"><link rel="preload" href="/assets/js/6.8a44c677.js" as="script"><link rel="preload" href="/assets/js/10.5e2da4d1.js" as="script"><link rel="prefetch" href="/assets/js/11.220c158d.js"><link rel="prefetch" href="/assets/js/12.b1e6b80c.js"><link rel="prefetch" href="/assets/js/13.6773e801.js"><link rel="prefetch" href="/assets/js/14.ac840d4b.js"><link rel="prefetch" href="/assets/js/15.58f52d14.js"><link rel="prefetch" href="/assets/js/16.976d494d.js"><link rel="prefetch" href="/assets/js/17.d47fb699.js"><link rel="prefetch" href="/assets/js/18.74c455b7.js"><link rel="prefetch" href="/assets/js/2.26db6680.js"><link rel="prefetch" href="/assets/js/3.e6f78273.js"><link rel="prefetch" href="/assets/js/4.9339957e.js"><link rel="prefetch" href="/assets/js/5.9dcceca0.js"><link rel="prefetch" href="/assets/js/7.e68f402f.js"><link rel="prefetch" href="/assets/js/8.bf682037.js"><link rel="prefetch" href="/assets/js/9.9ac068c9.js">
+    <link rel="stylesheet" href="/assets/css/0.styles.62d8fb78.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div id="global-layout" data-v-7f2e4136><header class="header-container" style="background-size:cover;background-repeat:no-repeat;background-position:center;background-attachment:scroll;background-image:url(/post-bg.jpeg);" data-v-93921ff8 data-v-7f2e4136><nav class="navbar" style="position:absolute;opacity:1;transition:all 0.5s ease-in-out;" data-v-93921ff8><a href="/" class="navbar-link router-link-active">
+    Top Blog
+  </a> <ul class="navbar-links"><li><a href="/" class="router-link-active">
+        HOME
+      </a></li><li><a href="/about/">
+        ABOUT
+      </a></li><li><a href="/tags/">
+        TAGS
+      </a></li></ul> <div id="nav-icon"><span></span><span></span><span></span></div></nav> <div class="header-title" data-v-93921ff8 data-v-93921ff8><h1 data-v-93921ff8>深入 JS 之原型和原型链</h1> <p data-v-93921ff8></p></div></header> <div class="container" data-v-b3fda33c data-v-7f2e4136><main class="main" style="width:60%;" data-v-b3fda33c><div class="post" data-v-b3fda33c data-v-b3fda33c><article class="main-div"><div class="post-content content content__default"><p>本篇博客主要是对 Javcscript 原型和原型链的学习理解
+</p> <h2 id="理解原型"><a href="#理解原型" class="header-anchor">#</a> 理解原型</h2> <p>JavaScript 常被描述为一种基于原型的语言——每个对象拥有一个原型对象，对象以其原型为模板、从原型继承方法和属性。原型对象也可能拥有原型，并从中继承方法和属性，一层一层、以此类推。这种关系常被称为原型链。</p> <h2 id="构造函数创建对象"><a href="#构造函数创建对象" class="header-anchor">#</a> 构造函数创建对象</h2> <p>JavaScript 中使用 new 操作符，通过构造函数初始化新对象。我们先使用构造函数创建一个对象。</p> <div class="language- extra-class"><pre class="language-text"><code>function Ninja() { 
+    this.swung = true;
+}
+
+const ninja = new Ninja()
+console.log(ninja.swung) // true
+</code></pre></div><p>在上面例子中，简单的通过 Ninja 构造器实例一个对象。接下来我们通过这个例子详细展开。</p> <h2 id="prototype"><a href="#prototype" class="header-anchor">#</a> prototype</h2> <p>在 JavaScript 中，函数可以有属性。每个函数都有一个特殊的属性叫作原型（prototype）。例如：</p> <div class="language- extra-class"><pre class="language-text"><code>function Ninja() { 
+  
+}
+
+Ninja.prototype.swung = true
+const ninja = new Ninja()
+console.log(ninja.swung) // true
+</code></pre></div><p>上面例子中 Ninja 函数的 prototype 属性指向的是一个对象，被构建的实例对象 ninja 的原型也指向这个对象。关于 ninja 原型则在下面详细展开：</p> <h2 id="proto"><a href="#proto" class="header-anchor">#</a> __ proto__</h2> <p>在 JavaScript 中，实例对象的原型属性是内置属性（使用标记 [[prototype]]）。ES6之前 ECMAScript 标准没有提供接口访问这个属性的，但是许多浏览器都实现了 JavaScript 非标准的内置属性__proto__来访问对象属性。</p> <div class="language- extra-class"><pre class="language-text"><code>function Ninja() { 
+    this.swung = true;
+}
+
+const ninja = new Ninja()
+console.log(ninja.__proto__ === Ninja.prototype) // true
+</code></pre></div><p>每一个JavaScript对象(除了null)都具有__proto__属性，这个属性会指向该对象的原型。</p> <p>接着在看下面这个例子：</p> <div class="language- extra-class"><pre class="language-text"><code>function Ninja() { 
+    this.swung = true;
+}
+
+const ninja = new Ninja()
+console.log(Object.getPrototypeOf(ninja) === Ninja.prototype) // true
+</code></pre></div><p>ES6开始，ECMAScript 标准提供了 Object.getPrototypeOf() 和 Object.setPrototypeOf() 访问器来访问和设置原型。__proto__它本质上是一个内部属性，而不是一个正式的对外的 API，只是由于浏览器广泛支持，才被加入了 ES6，所以建议不要使用。</p> <p>上面例子中构造函数原型和实例对象原型是相同的，它们的原型中还包含一个特殊的属性 constructor 用于指向构造函数。</p> <h2 id="constructor"><a href="#constructor" class="header-anchor">#</a> constructor</h2> <p>每个原型都有一个 constructor 属性指向关联的构造函数。</p> <div class="language- extra-class"><pre class="language-text"><code>function Ninja() { 
+  
+}
+
+console.log(Ninja.prototype.constructor === Ninja) // true
+</code></pre></div><h2 id="构造函数、实例对象和-constructor-关系图"><a href="#构造函数、实例对象和-constructor-关系图" class="header-anchor">#</a> 构造函数、实例对象和 constructor 关系图</h2> <p><img src="https://user-gold-cdn.xitu.io/2020/5/12/172093ef6ae12661?w=978&amp;h=964&amp;f=png&amp;s=248312" alt=""></p> <h2 id="原型链"><a href="#原型链" class="header-anchor">#</a> 原型链</h2> <p>当读取实例的属性时，如果找不到，就会查找与对象关联的原型中的属性，如果还查不到，就去找原型的原型，一直找到最顶层为止。</p> <p>举个例子：</p> <div class="language- extra-class"><pre class="language-text"><code>function Ninja() { 
+  
+}
+
+Ninja.prototype.swung = true
+const ninja = new Ninja()
+ninja.swung = false
+console.log(ninja.swung) // false
+
+delete ninja.swung
+console.log(ninja.swung) // true
+</code></pre></div><p>原型链的最顶层即原型链的终点<code>Object.prototype</code>为null,我们可以打印：</p> <div class="language- extra-class"><pre class="language-text"><code>console.log(Object.prototype.__proto__) // null
+</code></pre></div><blockquote><p>null 表示“没有对象”，即该处不应该有值。</p></blockquote> <p>所以 Object.prototype.__ proto__ 的值为 null 跟 Object.prototype 没有原型，其实表达了一个意思。</p> <p>所以查找属性的时候查到 Object.prototype 就停止查找了。</p></div></article> <div class="main-div vssue"><!----></div></div></main> <aside class="aside" data-v-b3fda33c data-v-b3fda33c><div class="info-card main-div" data-v-1311ce9e data-v-b3fda33c><div class="info-card-header" style="background-size:cover;background-repeat:no-repeat;background-position:center;background-attachment:scroll;background-image:url(/avatar-bg.jpeg);" data-v-1311ce9e><img src="/avatar-top.jpeg" alt="melodydl" class="info-avatar" data-v-1311ce9e></div> <div class="info-card-body" data-v-1311ce9e><section class="info-name" data-v-1311ce9e>
+      melodydl
+    </section> <section class="info-desc" data-v-1311ce9e>In me the tiger sniffs the rose<br/>心有猛虎，细嗅蔷薇</section> <section class="info-contact" data-v-1311ce9e><section data-v-1311ce9e><span data-v-1311ce9e data-v-1311ce9e><svg class="icon" style="font-size:1em;" data-v-1311ce9e data-v-1311ce9e><use xlink:href="#icon-location" data-v-1311ce9e data-v-1311ce9e></use></svg><span class="info-text" data-v-1311ce9e data-v-1311ce9e>
+          Shanghai, China
+        </span></span></section> <!----> <section data-v-1311ce9e><span data-v-1311ce9e data-v-1311ce9e><svg class="icon" style="font-size:1em;" data-v-1311ce9e data-v-1311ce9e><use xlink:href="#icon-email" data-v-1311ce9e data-v-1311ce9e></use></svg><span class="info-text" data-v-1311ce9e data-v-1311ce9e>
+          facecode@foxmail.com
+        </span></span></section></section></div> <div class="info-card-footer" data-v-1311ce9e><p class="footer-sns-link" data-v-1311ce9e><a target="_blank" href="https://blog.csdn.net/weixin_44002432" class="sns-link" data-v-1311ce9e><span class="sns-icon" data-v-1311ce9e data-v-1311ce9e><svg class="icon" style="font-size:35px;" data-v-1311ce9e data-v-1311ce9e><use xlink:href="#icon-csdn" data-v-1311ce9e data-v-1311ce9e></use></svg></span></a><a target="_blank" href="https://weibo.com/u/5656925978" class="sns-link" data-v-1311ce9e><span class="sns-icon" data-v-1311ce9e data-v-1311ce9e><svg class="icon" style="font-size:35px;" data-v-1311ce9e data-v-1311ce9e><use xlink:href="#icon-weibo" data-v-1311ce9e data-v-1311ce9e></use></svg></span></a><a target="_blank" href="https://juejin.im/user/5ce784a0f265da1b8333673c" class="sns-link" data-v-1311ce9e><span class="sns-icon" data-v-1311ce9e data-v-1311ce9e><svg class="icon" style="font-size:35px;" data-v-1311ce9e data-v-1311ce9e><use xlink:href="#icon-juejin" data-v-1311ce9e data-v-1311ce9e></use></svg></span></a><a target="_blank" href="https://www.zhihu.com/people/sheng-tang-de-xing-kong" class="sns-link" data-v-1311ce9e><span class="sns-icon" data-v-1311ce9e data-v-1311ce9e><svg class="icon" style="font-size:35px;" data-v-1311ce9e data-v-1311ce9e><use xlink:href="#icon-zhihu" data-v-1311ce9e data-v-1311ce9e></use></svg></span></a><a target="_blank" href="https://github.com/youdeliang" class="sns-link" data-v-1311ce9e><span class="sns-icon" data-v-1311ce9e data-v-1311ce9e><svg class="icon" style="font-size:35px;" data-v-1311ce9e data-v-1311ce9e><use xlink:href="#icon-github" data-v-1311ce9e data-v-1311ce9e></use></svg></span></a></p></div></div> <div class="post-toc main-div aside-toc" style="position:relative;top:0;width:0px;" data-v-b3fda33c><h4>- CATALOG</h4> <div class="post-nav-toc"><ul><li><a href="/posts/2020/05/29/%E5%8E%9F%E5%9E%8B%E5%92%8C%E5%8E%9F%E5%9E%8B%E9%93%BE.html#理解原型">理解原型</a></li><li><a href="/posts/2020/05/29/%E5%8E%9F%E5%9E%8B%E5%92%8C%E5%8E%9F%E5%9E%8B%E9%93%BE.html#构造函数创建对象">构造函数创建对象</a></li><li><a href="/posts/2020/05/29/%E5%8E%9F%E5%9E%8B%E5%92%8C%E5%8E%9F%E5%9E%8B%E9%93%BE.html#prototype">prototype</a></li><li><a href="/posts/2020/05/29/%E5%8E%9F%E5%9E%8B%E5%92%8C%E5%8E%9F%E5%9E%8B%E9%93%BE.html#proto">_ proto_</a></li><li><a href="/posts/2020/05/29/%E5%8E%9F%E5%9E%8B%E5%92%8C%E5%8E%9F%E5%9E%8B%E9%93%BE.html#constructor">constructor</a></li><li><a href="/posts/2020/05/29/%E5%8E%9F%E5%9E%8B%E5%92%8C%E5%8E%9F%E5%9E%8B%E9%93%BE.html#构造函数、实例对象和-constructor-关系图">构造函数、实例对象和 constructor 关系图</a></li><li><a href="/posts/2020/05/29/%E5%8E%9F%E5%9E%8B%E5%92%8C%E5%8E%9F%E5%9E%8B%E9%93%BE.html#原型链">原型链</a></li></ul></div></div></aside></div> <footer class="footer" data-v-7f2e4136><p class="footer-sns-link"><a target="_blank" href="https://blog.csdn.net/weixin_44002432" class="sns-link"><span class="sns-icon"><svg class="icon" style="font-size:40px;"><use xlink:href="#icon-csdn"></use></svg></span></a><a target="_blank" href="https://weibo.com/u/5656925978" class="sns-link"><span class="sns-icon"><svg class="icon" style="font-size:40px;"><use xlink:href="#icon-weibo"></use></svg></span></a><a target="_blank" href="https://juejin.im/user/5ce784a0f265da1b8333673c" class="sns-link"><span class="sns-icon"><svg class="icon" style="font-size:40px;"><use xlink:href="#icon-juejin"></use></svg></span></a><a target="_blank" href="https://www.zhihu.com/people/sheng-tang-de-xing-kong" class="sns-link"><span class="sns-icon"><svg class="icon" style="font-size:40px;"><use xlink:href="#icon-zhihu"></use></svg></span></a><a target="_blank" href="https://github.com/youdeliang" class="sns-link"><span class="sns-icon"><svg class="icon" style="font-size:40px;"><use xlink:href="#icon-github"></use></svg></span></a></p> <div class="copyright"><span id="custom">Copyright &copy; Top Blog 2020 <br /> 
+        Theme By <a href="https://www.vuepress.cn/" target="_blank">VuePress</a>
+        | <a href="https://www.github.com/youdeliang/" target="_blank">youdeliang</a></span> <iframe src="https://ghbtns.com/github-btn.html?user=youdeliang&amp;repo=vuepress-theme-melodydl&amp;type=star&amp;count=true" frameborder="0" scrolling="0" width="80px" height="20px" class="footer-btn" style="margin-left: 2px; margin-bottom:-5px;"></iframe></div></footer></div><div class="global-ui"><!----><!----></div></div>
+    <script src="/assets/js/app.c74921c7.js" defer></script><script src="/assets/js/6.8a44c677.js" defer></script><script src="/assets/js/10.5e2da4d1.js" defer></script>
+  </body>
+</html>
